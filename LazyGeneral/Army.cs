@@ -1,40 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LazyGeneral
 {
     class Army
     {
-        public Army(int new_team, double new_power, int loc_x, int loc_y)
+        //=======================Конструктор=======================//
+        public Army(double startPower, int startLocationX, int startLocationY)
         {
-            power = new_power;
-            location[0] = loc_x;
-            location[1] = loc_y;
-            team = new_team;
-
+            power = startPower;
+            location[0] = startLocationX;
+            location[1] = startLocationY;
         }
+
+        //=======================Необходимые параметры=======================//
         private double power;
-        public int[] location = new int[2];
-        private int team;
-        private double basic_dmg = 50;
-        public int number;
-        public bool fighting;
+        private int[] location = new int[2];
+        private int number;
+        private bool inFight;
+        private const double basicPower = 50.0;
 
-        public int Team
-        {
-            get { return team; }
-        }
-
+        //=======================Свойства=======================//
         public double Power
         {
             get { return power; }
-            set { power = value; }
+            set
+            {
+                if (power > 0)
+                    power = value;
+                else power = 0;
+            }
+        }
+        public int[] Location
+        {
+            get { return location; }
+            set
+            {
+                if (location[0] > 0)
+                    location[0] = value[0];
+                if (location[1] > 0)
+                    location[1] = value[1];
+            }
+        }
+        public int Number
+        {
+            get { return number; }
+        }
+        public bool InFight
+        {
+            get { return inFight; }
+            set { inFight = value; }
+        }
+        public double BasicPower
+        {
+            get { return basicPower; }
         }
 
-        public double Basic_dmg
-        {
-            get { return basic_dmg; }
-        }
     }
 }
