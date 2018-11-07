@@ -9,13 +9,15 @@ namespace LazyGeneral
     class Phases
     {
         //=======================Конструктор=======================//
-        public Phases(Army[,] a, int maxArmy)
+        public Phases(Army[,] a, int startArmy)
         {
             teams = a;
             battlesCount = 0;
             armyCount[0] = teams.GetLength(0);
             armyCount[1] = armyCount[0];
-            battles = new Battle[maxArmy];
+            battles = new Battle[startArmy];
+            maxArmy = startArmy;
+            commands = new MoveOrder[maxArmy, 2];
         }
 
         //=======================Необходимые параметры=======================//
@@ -25,6 +27,9 @@ namespace LazyGeneral
         private Battle[] battles;
         private int battlesCount;
 
+        private int maxArmy;
+        private MoveOrder[,] commands;
+        private int[] curCommand = new int[2];
         //=======================Свойства=======================//
         public Army[,] Teams
         {
@@ -44,20 +49,103 @@ namespace LazyGeneral
             get { return battlesCount; }
         }
 
+        public int MaxArmy
+        {
+            get { return maxArmy; }
+        }
         //=======================Методы=======================//
         public void Scouting()
         {
+            Console.WriteLine("Информация для первого игрока:");
+            ShowInfo(0);
+            Console.WriteLine("Информация для второго игрока:");
+            ShowInfo(1);
 
+            void ShowInfo(int side)
+            {
+                Console.WriteLine("Количество армий в живых:" + armyCount[side]);
+                Console.WriteLine("Таблица армий:");
+                Console.WriteLine("Номер\t Мощь\t Сражается\t X\t Y\t");
+                for (int i = 0; i < maxArmy; i++)
+                    Console.WriteLine(teams[i, side].Number + "\t" + teams[i, side].Power + "\t" + teams[i, side].InFight + "\t" + teams[i, side].Location[0] + "\t" + teams[i, side].Location[1]);
+            }
         }
 
         public void Orders()
         {
+            curCommand[0] = 0;
+            curCommand[1] = 0;
+            Console.WriteLine("Фаза приказов первого игрока!");
+            OrderFormation(0);
+            Console.WriteLine("Фаза приказов второго игрока!");
+            OrderFormation(1);
 
+            void OrderFormation(int side)
+            {
+                int cur;
+                bool quit = false;
+                int num;
+                string read;
+                string[] coordsSym = new string[4];
+                int[] coordsInt = new int[4];
+                while (!quit)
+                {
+                    Console.WriteLine("Выберите армию либо закончите ход:");
+                    for (int i = 0; i < armyCount[side]; i++)
+                        if (teams[i, side].Power != 0 && !teams[i, side].InFight)
+                            Console.WriteLine("Номер армии:" + teams[i, side].Number + "\t Мощь армии:" + teams[i, side].Power);
+                    Console.WriteLine("Выход: 123");
+                    read = Console.ReadLine();
+                    num = int.Parse(read);
+                    switch (num)
+                    {
+                        case 123:
+                            quit = true;
+                            break;
+
+                        default:
+                            cur = 0;
+                            Console.WriteLine("Напишите два приказа армии:");
+                            StringToInt(0);
+                            StringToInt(2);
+                            while (commands[cur, side].armyNumber != num && cur < curCommand[side])
+                                cur++;
+                            if (cur == curCommand[side])
+                            {
+                                commands[curCommand[side], side].armyNumber = num;
+                                for (int i = 0; i < 2; i++)
+                                    for (int j = 0; j < 2; j++)
+                                        commands[curCommand[side], side].step[i, j] = coordsInt[i * 2 + j];
+                                curCommand[side]++;
+                            }
+                            else
+                            {
+                                for (int i = cur; i < curCommand[side] - 1; i++)
+                                    commands[i, side] = commands[i + 1, side];
+                                for (int i = 0; i < 2; i++)
+                                    for (int j = 0; j < 2; j++)
+                                        commands[curCommand[side], side].step[i, j] = coordsInt[i * 2 + j];
+                            }
+                            break;
+                    }
+                }
+                void StringToInt(int curt)
+                {
+                    read = Console.ReadLine();
+                    coordsSym = read.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = curt; i < curt + 2; i++)
+                        coordsInt[i] = int.Parse(coordsSym[i]);
+                }
+
+            }
         }
 
         public void Move()
         {
+            for (int i = 0; i < curCommand[0]; i++)
+            {
 
+            }
         }
 
         public void Attack()
@@ -82,16 +170,15 @@ namespace LazyGeneral
                     battles[duelNum].Forces[side].Power = 0;
                     armyCount[side]--;
                 }
-                else
-                    battles[duelNum].Forces[side].InFight = false;
+                battles[duelNum].Forces[side].InFight = false;
             }
         }
 
         //=======================Вспомогательные структуры=======================//
-        struct MoveOrder
+        public struct MoveOrder
         {
-            int armyNumber;
-            int[,] step; // Строки - шаги, столбцы - оси
+            public int armyNumber;
+            public int[,] step; // Строки - шаги, столбцы - оси
         }
     }
 }
