@@ -10,36 +10,19 @@ using System.Windows.Forms;
 
 namespace LazyGeneral
 {
-	public partial class Form1 : Form
+	public partial class MainWindow : Form
 	{
-		GameGraphics gamedrive = new GameGraphics();
 
-		public Form1()
+		public MainWindow()
 		{
 			InitializeComponent();
-			gamedrive.Init(this.pictureBox1.Width,this.pictureBox1.Height);
 		}
 
-		private void Form1_MouseDown(object sender, MouseEventArgs e)
+		private void buttonStartGame_Click(object sender, EventArgs e)
 		{
-
-		}
-
-		private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
-		{
-			gamedrive.g = pe.Graphics;
-			gamedrive.PaintBattleField();
-			gamedrive.DrawArmy(2,3);
-		}
-
-		private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-		{
-			
-		}
-
-		private void Form1_Load(object sender, EventArgs e)
-		{
-
+			Form _form2 = new GameWindow();
+			_form2.Show();
+			//Application.OpenForms[0].Close();
 		}
 	}
 }
