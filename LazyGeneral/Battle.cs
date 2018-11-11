@@ -9,10 +9,9 @@ namespace LazyGeneral
     class Battle
     {
         //=======================Конструктор=======================//
-        public Battle(Army a1, Army a2)
+        public Battle()
         {
-            forces[0] = a1;
-            forces[1] = a2;
+
         }
 
         //=======================Необходимые параметры=======================//
@@ -27,7 +26,7 @@ namespace LazyGeneral
         //=======================Методы=======================//
         public void Fight()
         {
-            Army temp = new Army(forces[0].Power, 0, 0);
+            Army temp = new Army(forces[0].Power, 0, 0, 0, 99);
             temp.Power = forces[0].Power;
             forces[0].Power -= forces[1].BasicPower + forces[1].Power * 0.33;
             forces[1].Power -= temp.BasicPower + temp.Power * 0.33;

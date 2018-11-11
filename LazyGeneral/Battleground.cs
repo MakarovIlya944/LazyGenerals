@@ -61,8 +61,8 @@ namespace LazyGeneral
             }
         }
         //=======================Необходимые параметры=======================//
-        private const int sizeX = 10;
-        private const int sizeY = 10;
+        private const int sizeX = 2;
+        private const int sizeY = 2;
         public Tile[,] tile = new Tile[sizeX, sizeY];
 
         //=======================Свойства=======================//

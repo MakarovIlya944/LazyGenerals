@@ -9,11 +9,13 @@ namespace LazyGeneral
     class Army
     {
         //=======================Конструктор=======================//
-        public Army(double startPower, int startLocationX, int startLocationY)
+        public Army(double startPower, int startLocationX, int startLocationY, int startTeam, int startNumber)
         {
+            team = startTeam;
             power = startPower;
             location[0] = startLocationX;
             location[1] = startLocationY;
+            number = startNumber;
         }
 
         //=======================Необходимые параметры=======================//
@@ -21,6 +23,7 @@ namespace LazyGeneral
         private int[] location = new int[2];
         private int number;
         private bool inFight;
+        private int team;
         private const double basicPower = 50.0;
 
         //=======================Свойства=======================//
@@ -58,6 +61,9 @@ namespace LazyGeneral
         {
             get { return basicPower; }
         }
-
+        public int Team
+        {
+            get { return team; }
+        }
     }
 }
