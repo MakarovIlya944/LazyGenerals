@@ -13,7 +13,7 @@ namespace LazyGeneral
 		//игровое поле с типами тайлов
 		private cellType[][] gameFiled;
 		//размеры поля в ячейках
-		public int width = 7, height = 7;
+		public int width = 3, height = 3;
 		//размеры поля в пикселях
 		private int widthWindow, heightWindow;
 		//отступ в пикселях от границы
@@ -62,9 +62,16 @@ namespace LazyGeneral
 			return false;
 		}
 
-		public bool ClickCell(Point mouse)
+		public Point ClickCell(Point mouse)
 		{
-			return true;
+			int _x = mouse.X, _y = mouse.Y;
+			if (_x > netBorder &&
+				_y > netBorder &&
+				_x < widthWindow - netBorder &&
+				_y < heightWindow - netBorder)
+				return new Point((_x - netBorder) / dx + 1, (_y - netBorder) / dy + 1);
+			else
+				return new Point(-1, -1);
 		}
 
 		public bool DrawArmy(int x, int y)

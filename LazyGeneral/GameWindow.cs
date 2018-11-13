@@ -28,7 +28,9 @@ namespace LazyGeneral
 
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
-			gamedrive.ClickCell(MousePosition);
+			
+			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
+			MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
 		}
 	}
 }
