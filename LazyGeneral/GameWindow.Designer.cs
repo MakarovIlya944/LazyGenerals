@@ -35,17 +35,19 @@
 			// pictureBox1
 			// 
 			this.pictureBox1.BackColor = System.Drawing.Color.OliveDrab;
-			this.pictureBox1.Location = new System.Drawing.Point(0, -1);
+			this.pictureBox1.Location = new System.Drawing.Point(0, 0);
 			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.Size = new System.Drawing.Size(801, 453);
+			this.pictureBox1.Size = new System.Drawing.Size(800, 450);
 			this.pictureBox1.TabIndex = 0;
 			this.pictureBox1.TabStop = false;
+			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+			this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
 			// 
 			// GameWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(800, 451);
 			this.Controls.Add(this.pictureBox1);
 			this.Name = "GameWindow";
 			this.Text = "GameWindow";
