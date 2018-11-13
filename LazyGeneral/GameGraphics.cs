@@ -13,16 +13,17 @@ namespace LazyGeneral
 		//игровое поле с типами тайлов
 		private cellType[][] gameFiled;
 		//размеры поля в ячейках
-		public int width = 3, height = 3;
+		public int width = 8, height = 6;
 		//размеры поля в пикселях
 		private int widthWindow, heightWindow;
 		//отступ в пикселях от границы
 		private int netBorder = 15, cellBorder = 2;
 		//размеры ячейки в пикселях
 		private int dx, dy;
+		//последнее выделение клетки
+		private Point cellLightning;
 		public Graphics g { set; get; }
-
-		private Pen netPen, armyPen;
+		
 
 		public bool Init(int _w, int _h)
 		{
@@ -41,11 +42,7 @@ namespace LazyGeneral
 			gameFiled[2][4] = cellType.water;
 			gameFiled[1][4] = cellType.water;
 			gameFiled[3][3] = cellType.water;
-
-			netPen = new Pen(Color.Black);
-			netPen.Width = 2;
-			armyPen = new Pen(Color.Azure);
-			armyPen.Width = 3;
+			
 			
 			return true;
 		}
@@ -62,6 +59,13 @@ namespace LazyGeneral
 			return false;
 		}
 
+		private void CellLighting(Point cell)
+		{
+			cellLightning = cell;
+			//ошибка недопустимый аргумент
+			g.DrawRectangle(new Pen(Color.Red, cellBorder), cell.X * dx + cellBorder, cell.Y * dy + cellBorder, dx, dy);
+		}
+
 		public Point ClickCell(Point mouse)
 		{
 			int _x = mouse.X, _y = mouse.Y;
@@ -69,12 +73,15 @@ namespace LazyGeneral
 				_y > netBorder &&
 				_x < widthWindow - netBorder &&
 				_y < heightWindow - netBorder)
+			{
+				CellLighting(new Point((_x - netBorder) / dx + 1, (_y - netBorder) / dy + 1));
 				return new Point((_x - netBorder) / dx + 1, (_y - netBorder) / dy + 1);
+			}
 			else
 				return new Point(-1, -1);
 		}
 
-		public bool DrawArmy(int x, int y)
+		public bool DrawArmy(int team, int x, int y)
 		{
 			if (x < 0 || x > width || y < 0 || y > height)
 				return false;
@@ -85,7 +92,10 @@ namespace LazyGeneral
 			int _dx = dx - cellBorder * 2 - armyReduce * 2;
 			int _dy = dy - cellBorder * 2 - armyReduce * 2;
 
-			g.DrawRectangle(armyPen, _x, _y, _dx, _dy);
+			if(team == 0)
+				g.DrawRectangle(new Pen(Color.DarkKhaki,4), _x, _y, _dx, _dy);
+			else
+				g.DrawRectangle(new Pen(Color.OrangeRed,4), _x, _y, _dx, _dy);
 
 			return true;
 		}

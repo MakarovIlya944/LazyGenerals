@@ -23,14 +23,15 @@ namespace LazyGeneral
 		{
 			gamedrive.g = pe.Graphics;
 			gamedrive.PaintBattleField();
-			gamedrive.DrawArmy(2, 3);
+			gamedrive.DrawArmy(0, 2, 3);
+			gamedrive.DrawArmy(1, 4, 4);
 		}
 
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
 			
 			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
-			MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
+			//MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
 		}
 	}
 }
