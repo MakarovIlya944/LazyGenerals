@@ -63,7 +63,7 @@ namespace LazyGeneral
 		{
 			cellLightning = cell;
 			//ошибка недопустимый аргумент
-			g.DrawRectangle(new Pen(Color.Red, cellBorder), cell.X * dx + cellBorder, cell.Y * dy + cellBorder, dx, dy);
+			//g.DrawRectangle(new Pen(Color.Red, cellBorder), cell.X * dx + cellBorder, cell.Y * dy + cellBorder, dx, dy);
 		}
 
 		public Point ClickCell(Point mouse)

@@ -13,6 +13,8 @@ namespace LazyGeneral
 	public partial class GameWindow : Form
 	{
 		GameGraphics gamedrive = new GameGraphics();
+		bool isLight = false;
+
 		public GameWindow()
 		{
 			InitializeComponent();
@@ -29,7 +31,7 @@ namespace LazyGeneral
 
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
-			
+			isLight = true;
 			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
 			//MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
 		}
