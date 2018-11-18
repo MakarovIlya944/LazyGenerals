@@ -12,19 +12,27 @@ namespace LazyGeneral
 {
 	public partial class MainWindow : Form
 	{
-
 		public MainWindow()
 		{
 			InitializeComponent();
-			GameWindow gameWindow = new GameWindow();
-			gameWindow.Show();
 		}
 
-		private void buttonStartGame_Click(object sender, EventArgs e)
+		private void Form1_MouseDown(object sender, MouseEventArgs e)
 		{
-			GameWindow gameWindow = new GameWindow();
-			gameWindow.Show();
-			//this.Hide();
+
+		}
+
+		private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
+		{
+			Graphics g = pe.Graphics;
+			System.Drawing.Pen myPen;
+			myPen = new System.Drawing.Pen(System.Drawing.Color.Tomato);
+			g.DrawEllipse(myPen, 30, 150, 20, 50);
+		}
+
+		private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+		{
+			
 		}
 	}
 }
