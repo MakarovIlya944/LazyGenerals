@@ -28,37 +28,67 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(185, 45);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(437, 259);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
-            // 
-            // MainWindow
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.pictureBox1);
-            this.Name = "MainWindow";
-            this.Text = "Form1";
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
+			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.buttonStartGame = new System.Windows.Forms.Button();
+			this.buttonExit = new System.Windows.Forms.Button();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// pictureBox1
+			// 
+			this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.pictureBox1.Image = global::LazyGeneral.Properties.Resources.mainmenu;
+			this.pictureBox1.InitialImage = global::LazyGeneral.Properties.Resources.mainmenu;
+			this.pictureBox1.Location = new System.Drawing.Point(-2, -3);
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(803, 454);
+			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pictureBox1.TabIndex = 0;
+			this.pictureBox1.TabStop = false;
+			// 
+			// buttonStartGame
+			// 
+			this.buttonStartGame.BackColor = System.Drawing.SystemColors.Control;
+			this.buttonStartGame.Font = new System.Drawing.Font("Stencil Std", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.buttonStartGame.Location = new System.Drawing.Point(317, 77);
+			this.buttonStartGame.Name = "buttonStartGame";
+			this.buttonStartGame.Size = new System.Drawing.Size(176, 45);
+			this.buttonStartGame.TabIndex = 1;
+			this.buttonStartGame.Text = "Начать игру";
+			this.buttonStartGame.UseVisualStyleBackColor = false;
+			this.buttonStartGame.Click += new System.EventHandler(this.buttonStartGame_Click);
+			// 
+			// buttonExit
+			// 
+			this.buttonExit.BackColor = System.Drawing.SystemColors.Control;
+			this.buttonExit.Font = new System.Drawing.Font("Stencil Std", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.buttonExit.Location = new System.Drawing.Point(317, 332);
+			this.buttonExit.Name = "buttonExit";
+			this.buttonExit.Size = new System.Drawing.Size(176, 45);
+			this.buttonExit.TabIndex = 1;
+			this.buttonExit.Text = "Выход";
+			this.buttonExit.UseVisualStyleBackColor = false;
+			// 
+			// MainWindow
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.buttonExit);
+			this.Controls.Add(this.buttonStartGame);
+			this.Controls.Add(this.pictureBox1);
+			this.Name = "MainWindow";
+			this.Text = "LazyGenerals";
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
 		private System.Windows.Forms.PictureBox pictureBox1;
+		private System.Windows.Forms.Button buttonStartGame;
+		private System.Windows.Forms.Button buttonExit;
 	}
 }
 

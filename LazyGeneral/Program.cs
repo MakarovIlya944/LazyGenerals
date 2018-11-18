@@ -2,9 +2,20 @@
 
 namespace LazyGeneral
 {
-    class Program
-    {
-        static void Main(string[] args)
+	static class Program
+	{
+		/// <summary>
+		/// Главная точка входа для приложения.
+		/// </summary>
+		[STAThread]
+		static void Main()
+		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.Run(new MainWindow());
+		}
+
+        static void Logic()
         {
             int end = 3;
             Stages start = new Stages();
@@ -30,5 +41,5 @@ namespace LazyGeneral
             }
             Console.ReadLine();
         }
-    }
+	}
 }
