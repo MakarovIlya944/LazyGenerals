@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainWindow", "LazyGeneral\MainWindow.csproj", "{2D8E2FC1-7D84-4B70-B60A-C4D3390693A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyGeneral", "LazyGeneral\LazyGeneral.csproj", "{2D8E2FC1-7D84-4B70-B60A-C4D3390693A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
