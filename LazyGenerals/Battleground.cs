@@ -6,34 +6,6 @@ using System.Threading.Tasks;
 
 namespace LazyGeneral
 {
-    class Tile
-    {
-        //=======================Конструктор=======================//
-        public Tile(int option)
-        {
-            switch (option)
-            {
-                case (int)types.field:
-                    type = types.field;
-                    break;
-
-                case (int)types.water:
-                    type = types.field;
-                    break;
-            }
-        }
-
-        //=======================Необходимые параметры=======================//
-        public enum types { water, field };
-        private types type = types.field;
-
-        //=======================Свойства=======================//
-        public types Type
-        {
-            get { return type; }
-        }
-    }
-
     class Battleground
     {
         //=======================Конструктор=======================//
@@ -44,7 +16,7 @@ namespace LazyGeneral
                 case "100%":
                     for (int i = 0; i < sizeX; i++)
                         for (int j = 0; j < sizeY; j++)
-                            tile[i, j] = new Tile(1);
+                            tile[i, j] = types.field;
                     break;
 
                 case "70%":
@@ -52,10 +24,10 @@ namespace LazyGeneral
                     for (int i = 0; i < sizeX; i++)
                         for (int j = 0; j < sizeY; j++)
                         {
-                            int res = rand.Next(1, 11);
-                            if (res < 30)
-                                tile[i, j] = new Tile(0);
-                            else tile[i, j] = new Tile(1);
+                            double res = rand.NextDouble();
+                            if (res <= 0.3)
+                                tile[i, j] = types.water;
+                            else tile[i, j] = types.field;
                         }
                     break;
             }
@@ -63,7 +35,8 @@ namespace LazyGeneral
         //=======================Необходимые параметры=======================//
         private const int sizeX = 2;
         private const int sizeY = 2;
-        public Tile[,] tile = new Tile[sizeX, sizeY];
+        public enum types { water, field };
+        public types[,] tile = new types[sizeX, sizeY];
 
         //=======================Свойства=======================//
         public int SizeX

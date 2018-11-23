@@ -10,7 +10,23 @@ namespace LazyGeneral
     {
         public void StartStage()
         {
+            Battleground field = new Battleground("100%");
+            int armyCount = 5;
+            SendInfo(field.SizeX, field.SizeY, field.tile, armyCount);
+
+            // Обрати внимание!
             Army[,] A = new Army[2, 2];
+            int side = new int();
+            double[] powerInfo = new double[armyCount];
+            int[] numberInfo = new int[armyCount];
+            int[,] locationInfo = new int[armyCount, 2];
+            for (int j = 0; j < 2; j++)
+            {
+                GetInfo(side, powerInfo, numberInfo, locationInfo);
+                for (int i = 0; i < armyCount; i++)
+                    A[i, side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]);;
+            }
+
             A[0, 0] = new Army(500, 1, 1, 0, 0);
             A[0, 1] = new Army(500, 0, 1, 1, 0);
             A[1, 0] = new Army(5000, 0, 0, 0, 1);

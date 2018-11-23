@@ -72,6 +72,26 @@ namespace LazyGeneral
                 for (int i = 0; i < maxArmy; i++)
                     Console.WriteLine(teams[i, side].Number + "\t" + teams[i, side].Power + "\t" + teams[i, side].InFight + "\t" + teams[i, side].Location[0] + "\t" + teams[i, side].Location[1]);
             }
+            double[] powerInfo = new double[maxArmy];
+            int[] numberInfo = new int[maxArmy];
+            int[,] locationInfo = new int[maxArmy, 2];
+
+            // Обрати внимание!
+            Sending(0);
+            Sending(1);
+
+            void Sending(int side)
+            {
+                for (int i = 0; i < maxArmy; i++)
+                {
+                    powerInfo[i] = teams[i, side].Power;
+                    numberInfo[i] = teams[i, side].Number;
+                    for (int j = 0; j < 2; j++)
+                        locationInfo[i, j] = teams[i, side].Location[j];
+                }
+
+                SendInfo(side, powerInfo, numberInfo, locationInfo);
+            }
         }
 
         public void Orders()
@@ -141,6 +161,11 @@ namespace LazyGeneral
             //    }
 
             //}
+
+
+
+
+
             if (commands.Count == 0)
             {
                 MoveOrder cur = new MoveOrder();
