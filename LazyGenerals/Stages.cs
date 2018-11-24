@@ -12,26 +12,27 @@ namespace LazyGeneral
         {
             Battleground field = new Battleground("100%");
             int armyCount = 5;
-            SendInfo(field.SizeX, field.SizeY, field.tile, armyCount);
+            // Отправляю поле бля и макс мощь
+            int[,] poi = new int[field.SizeX, field.SizeY];
+            for (int i = 0; i < field.SizeX; i++)
+                for (int j = 0; j < field.SizeY; j++)
+                    poi[i, j] = (int)field.tile[i, j];
+            SendInfo(field.SizeX, field.SizeY, field.tile, 15000);
 
             // Обрати внимание!
             Army[,] A = new Army[2, 2];
             int side = new int();
-            double[] powerInfo = new double[armyCount];
-            int[] numberInfo = new int[armyCount];
-            int[,] locationInfo = new int[armyCount, 2];
+            double[] powerInfo;
+            int[] numberInfo;
+            int[,] locationInfo;
+            // Получаю команду, силы армий, их номера, их локации
             for (int j = 0; j < 2; j++)
             {
-                GetInfo(side, powerInfo, numberInfo, locationInfo);
+                (side, powerInfo, numberInfo, locationInfo)  = GetInfo();
                 for (int i = 0; i < armyCount; i++)
-                    A[i, side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]);;
+                    A[numberInfo[i], side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]);;
             }
-
-            A[0, 0] = new Army(500, 1, 1, 0, 0);
-            A[0, 1] = new Army(500, 0, 1, 1, 0);
-            A[1, 0] = new Army(5000, 0, 0, 0, 1);
-            A[1, 1] = new Army(5000, 1, 0, 1, 1);
-            game = new Phases(A, 2);
+            game = new Phases(A, armyCount, poi);
         }
 
         public void CyclicStage()
@@ -45,13 +46,28 @@ namespace LazyGeneral
 
         public int EndStage()
         {
+            // Отправляю инфу об окончании игры
             if (game.ArmyCount[0] == 0)
                 if (game.ArmyCount[1] == 0)
+                {
+                    SendInfo(2);
                     return 2;
-                else return 1;
+                }
+                else
+                {
+                    SendInfo(1);
+                    return 1;
+                }
             else if (game.ArmyCount[1] == 0)
+            {
+                SendInfo(0);
                 return 0;
-            else return 3;
+            }
+            else
+            {
+                SendInfo(3);
+                return 3;
+            }
         }
 
         Phases game;
