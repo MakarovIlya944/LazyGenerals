@@ -35,5 +35,10 @@ namespace LazyGeneral
 			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
 			//MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
 		}
-	}
+
+        private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+    }
 }

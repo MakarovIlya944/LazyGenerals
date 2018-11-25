@@ -16,12 +16,7 @@ namespace LazyGeneral
 		{
 			InitializeComponent();
 		}
-
-		private void Form1_MouseDown(object sender, MouseEventArgs e)
-		{
-
-		}
-
+        
 		private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
 		{
 			Graphics g = pe.Graphics;
@@ -30,9 +25,11 @@ namespace LazyGeneral
 			g.DrawEllipse(myPen, 30, 150, 20, 50);
 		}
 
-		private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-		{
-			
-		}
-	}
+        private void buttonStartGame_Click(object sender, EventArgs e)
+        {
+            GameWindow g = new GameWindow();
+            g.Show();
+            Hide();
+        }
+    }
 }

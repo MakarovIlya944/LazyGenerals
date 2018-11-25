@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("LazyGeneral")]
+[assembly: AssemblyTitle("LazyGenerals")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LazyGeneral")]
+[assembly: AssemblyProduct("LazyGenerals")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("2d8e2fc1-7d84-4b70-b60a-c4d3390693a8")]
+[assembly: Guid("86d1518b-8f85-4547-828e-100dcfcbca52")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //
