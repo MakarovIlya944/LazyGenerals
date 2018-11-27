@@ -80,7 +80,10 @@ namespace LazyGeneral
             else
             {
                 //включить другой режим
-
+                pictureBox1.Visible = true;
+                pictureBox1.Enabled = true;
+                gameInitGroup.Enabled = false;
+                gameInitGroup.Visible = false;
             }
         }
     }

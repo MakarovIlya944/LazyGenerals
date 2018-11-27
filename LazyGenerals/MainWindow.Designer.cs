@@ -31,6 +31,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.buttonStartGame = new System.Windows.Forms.Button();
             this.buttonExit = new System.Windows.Forms.Button();
+            this.buttonConnect = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,12 +70,25 @@
             this.buttonExit.Text = "Выход";
             this.buttonExit.UseVisualStyleBackColor = false;
             // 
+            // buttonConnect
+            // 
+            this.buttonConnect.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonConnect.Font = new System.Drawing.Font("Stencil Std", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonConnect.Location = new System.Drawing.Point(317, 191);
+            this.buttonConnect.Name = "buttonConnect";
+            this.buttonConnect.Size = new System.Drawing.Size(176, 45);
+            this.buttonConnect.TabIndex = 1;
+            this.buttonConnect.Text = "Подключиться";
+            this.buttonConnect.UseVisualStyleBackColor = false;
+            this.buttonConnect.Click += new System.EventHandler(this.buttonStartGame_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.buttonExit);
+            this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonStartGame);
             this.Controls.Add(this.pictureBox1);
             this.Name = "MainWindow";
@@ -89,6 +103,7 @@
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Button buttonStartGame;
 		private System.Windows.Forms.Button buttonExit;
-	}
+        private System.Windows.Forms.Button buttonConnect;
+    }
 }
 
