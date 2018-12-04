@@ -91,23 +91,23 @@ namespace LazyGeneral
             int sideNum;
             int[] newLoc;
             int[] temp;
-            int c = 0;
+            int c = 0; // количество утвержденных движений
             // отправка двумя партиями, но подряд (для удобства обработки сообщений от двух клиентов
             // возвращаю либо false, либо true true, либо true false на каждую команду
             while (c < armyCount[0] + armyCount[1])
             {
-                (armyNum, sideNum, newLoc) = GetInfo();
+                (armyNum, sideNum, newLoc) = GetInfo(); // получаем первую часть хода
                 switch (Check(teams[armyNum, sideNum].Location, newLoc))
                 {
                     case true:
                         SendInfo(true);
-                        temp = newLoc;
-                        (armyNum, sideNum, newLoc) = GetInfo();
+                        temp = newLoc; // запоминаем первую часть хода
+                        (armyNum, sideNum, newLoc) = GetInfo(); // получаем вторую часть хода
                         switch (Check(temp, newLoc))
                         {
                             case true:
                                 SendInfo(true);
-                                c++;
+                                c++; // увеличиваем счетчик утвержденных ходов
                                 break;
 
                             case false:
@@ -122,7 +122,7 @@ namespace LazyGeneral
                 }
             }
 
-            int[,] armys = new int[maxArmy * 2, 3]; // armynum, x, y
+            int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2
             // Дважды получаю список приказов, от каждого клиента по одному
             for (int k = 0; k < 2; k++)
             {
@@ -131,15 +131,15 @@ namespace LazyGeneral
                     AddArmy(sideNum, armys[i, 0], armys[i, 1], armys[i, 2], armys[i + 1, 1], armys[i + 1, 2]);
             }
 
-            bool Check(int[] curLoc, int[] nextLoc)
+            bool Check(int[] curLoc, int[] nextLoc) // Проверяю, движется ли армия только на одну клетку и что эта клетка не вода
             {
                 if (curLoc[0] + curLoc[1] + (nextLoc[0] + nextLoc[1]) == 1 && points[nextLoc[0], nextLoc[1]] == 1)
-                    return true;
-                return false;
+                    return true; // можно
+                return false; // нельзя
             }
 
 
-            void AddArmy(int side, int curArmy, int newLoc1x, int newLoc1y, int newLoc2x, int newLoc2y)
+            void AddArmy(int side, int curArmy, int newLoc1x, int newLoc1y, int newLoc2x, int newLoc2y) // добавляем приказ в очередь
             {
                 MoveOrder cur = new MoveOrder();
                 cur.step = new int[2, 2];
