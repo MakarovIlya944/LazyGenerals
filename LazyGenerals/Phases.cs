@@ -9,8 +9,9 @@ namespace LazyGeneral
     class Phases
     {
         //=======================Конструктор=======================//
-        public Phases(Army[,] a, int startArmy)
+        public Phases(Army[,] a, int startArmy, int[,] newPoints)
         {
+            points = newPoints; // не уверен, что работает
             teams = a;
             battlesCount = 0;
             armyCount = new int[2];
@@ -24,6 +25,8 @@ namespace LazyGeneral
         }
 
         //=======================Необходимые параметры=======================//
+        private int[,] points;
+
         private Army[,] teams;
         private int[] armyCount;
 
@@ -59,122 +62,92 @@ namespace LazyGeneral
         //=======================Методы=======================//
         public void Scouting()
         {
-            Console.WriteLine("Информация для первого игрока:");
-            ShowInfo(0);
-            Console.WriteLine("Информация для второго игрока:");
-            ShowInfo(1);
+            
+            double[] powerInfo = new double[maxArmy];
+            int[] numberInfo = new int[maxArmy];
+            int[,] locationInfo = new int[maxArmy, 2];
 
-            void ShowInfo(int side)
+            // Обрати внимание!
+            Sending(0);
+            Sending(1);
+
+            void Sending(int side)
             {
-                Console.WriteLine("Количество армий в живых:" + armyCount[side]);
-                Console.WriteLine("Таблица армий:");
-                Console.WriteLine("Номер\t Мощь\t Сражается\t X\t Y\t");
                 for (int i = 0; i < maxArmy; i++)
-                    Console.WriteLine(teams[i, side].Number + "\t" + teams[i, side].Power + "\t" + teams[i, side].InFight + "\t" + teams[i, side].Location[0] + "\t" + teams[i, side].Location[1]);
+                {
+                    powerInfo[i] = teams[i, side].Power;
+                    numberInfo[i] = teams[i, side].Number;
+                    for (int j = 0; j < 2; j++)
+                        locationInfo[i, j] = teams[i, side].Location[j];
+                }
+
+                SendInfo(side, powerInfo, numberInfo, locationInfo);
             }
         }
 
-        public void Orders()
+        public void Orders() // алерт, много говнокода
         {
-            //curCommand[0] = 0;
-            //curCommand[1] = 0;
-            //Console.WriteLine("Фаза приказов первого игрока!");
-            //OrderFormation(0);
-            //Console.WriteLine("Фаза приказов второго игрока!");
-            //OrderFormation(1);
+            int armyNum;
+            int sideNum;
+            int[] newLoc;
+            int[] temp;
+            int c = 0; // количество утвержденных движений
+            // отправка двумя партиями, но подряд (для удобства обработки сообщений от двух клиентов
+            // возвращаю либо false, либо true true, либо true false на каждую команду
+            while (c < armyCount[0] + armyCount[1])
+            {
+                (armyNum, sideNum, newLoc) = GetInfo(); // получаем первую часть хода
+                switch (Check(teams[armyNum, sideNum].Location, newLoc))
+                {
+                    case true:
+                        SendInfo(true);
+                        temp = newLoc; // запоминаем первую часть хода
+                        (armyNum, sideNum, newLoc) = GetInfo(); // получаем вторую часть хода
+                        switch (Check(temp, newLoc))
+                        {
+                            case true:
+                                SendInfo(true);
+                                c++; // увеличиваем счетчик утвержденных ходов
+                                break;
 
-            //void OrderFormation(int side)
-            //{
-            //    int cur;
-            //    bool quit = false;
-            //    int num;
-            //    string read;
-            //    string[] coordsSym = new string[4];
-            //    int[] coordsInt = new int[4];
-            //    while (!quit)
-            //    {
-            //        Console.WriteLine("Выберите армию либо закончите ход:");
-            //        for (int i = 0; i < armyCount[side]; i++)
-            //            if (teams[i, side].Power != 0 && !teams[i, side].InFight)
-            //                Console.WriteLine("Номер армии:" + teams[i, side].Number + "\t Мощь армии:" + teams[i, side].Power);
-            //        Console.WriteLine("Выход: 123");
-            //        read = Console.ReadLine();
-            //        num = int.Parse(read);
-            //        switch (num)
-            //        {
-            //            case 123:
-            //                quit = true;
-            //                break;
+                            case false:
+                                SendInfo(false);
+                                break;
+                        }
+                        break;
 
-            //            default:
-            //                cur = 0;
-            //                Console.WriteLine("Напишите два приказа армии:");
-            //                StringToInt(0);
-            //                StringToInt(2);
-            //                while (commands[cur, side].armyNumber != num && cur < curCommand[side])
-            //                    cur++;
-            //                if (cur == curCommand[side])
-            //                {
-            //                    commands[curCommand[side], side].armyNumber = num;
-            //                    for (int i = 0; i < 2; i++)
-            //                        for (int j = 0; j < 2; j++)
-            //                            commands[curCommand[side], side].step[i, j] = coordsInt[i * 2 + j];
-            //                    curCommand[side]++;
-            //                }
-            //                else
-            //                {
-            //                    for (int i = cur; i < curCommand[side] - 1; i++)
-            //                        commands[i, side] = commands[i + 1, side];
-            //                    for (int i = 0; i < 2; i++)
-            //                        for (int j = 0; j < 2; j++)
-            //                            commands[curCommand[side], side].step[i, j] = coordsInt[i * 2 + j];
-            //                }
-            //                break;
-            //        }
-            //    }
-            //    void StringToInt(int curt)
-            //    {
-            //        read = Console.ReadLine();
-            //        coordsSym = read.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            //        for (int i = curt; i < curt + 2; i++)
-            //            coordsInt[i] = int.Parse(coordsSym[i]);
-            //    }
+                    case false:
+                        SendInfo(false);
+                        break;
+                }
+            }
 
-            //}
-            if (commands.Count == 0)
+            int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2
+            // Дважды получаю список приказов, от каждого клиента по одному
+            for (int k = 0; k < 2; k++)
+            {
+                (sideNum, armys) = GetInfo();
+                for (int i = 0; i<armyCount[sideNum] * 2; i+= 2)
+                    AddArmy(sideNum, armys[i, 0], armys[i, 1], armys[i, 2], armys[i + 1, 1], armys[i + 1, 2]);
+            }
+
+            bool Check(int[] curLoc, int[] nextLoc) // Проверяю, движется ли армия только на одну клетку и что эта клетка не вода
+            {
+                if (curLoc[0] + curLoc[1] + (nextLoc[0] + nextLoc[1]) == 1 && points[nextLoc[0], nextLoc[1]] == 1)
+                    return true; // можно
+                return false; // нельзя
+            }
+
+
+            void AddArmy(int side, int curArmy, int newLoc1x, int newLoc1y, int newLoc2x, int newLoc2y) // добавляем приказ в очередь
             {
                 MoveOrder cur = new MoveOrder();
-
                 cur.step = new int[2, 2];
-                cur.currArm = teams[0, 0];
-                cur.step[0, 0] = 1;
-                cur.step[0, 1] = 0;
-                cur.step[1, 0] = 0;
-                cur.step[1, 1] = 0;
-                commands.Add(cur);
-
-                cur.step = new int[2, 2];
-                cur.currArm = teams[0, 1];
-                cur.step[0, 0] = 0;
-                cur.step[0, 1] = 1;
-                cur.step[1, 0] = 0;
-                cur.step[1, 1] = 0;
-                commands.Add(cur);
-
-                cur.step = new int[2, 2];
-                cur.currArm = teams[1, 0];
-                cur.step[0, 0] = 0;
-                cur.step[0, 1] = 1;
-                cur.step[1, 0] = 0;
-                cur.step[1, 1] = 0;
-                commands.Add(cur);
-
-                cur.step = new int[2, 2];
-                cur.currArm = teams[1, 1];
-                cur.step[0, 0] = 1;
-                cur.step[0, 1] = 0;
-                cur.step[1, 0] = 0;
-                cur.step[1, 1] = 0;
+                cur.currArm = teams[curArmy, side];
+                cur.step[0, 0] = newLoc1x;
+                cur.step[0, 1] = newLoc1y;
+                cur.step[1, 0] = newLoc2x;
+                cur.step[1, 1] = newLoc2y;
                 commands.Add(cur);
             }
         }
