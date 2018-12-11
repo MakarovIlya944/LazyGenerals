@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Client
+namespace LazyServer
 {
-    class Client
+    public class Client
     {
         private readonly int portNo;
         private readonly string serverIP;
@@ -133,38 +133,5 @@ namespace Client
         }
 
         ~Client() { client.Close(); }
-
-        static void Main(string[] args)
-        {
-            //Client cl_1 = new Client("127.0.0.1", 5000);
-            //Client cl_2 = new Client("127.0.0.1", 5001);
-            //cl_1._SendData("Hello from cl_1");
-            //cl_2._SendData("Howdy from cl_2");
-            //Console.WriteLine(cl_1._RecieveData() +
-            //    " by cl_1");
-            //Console.WriteLine(cl_2._RecieveData() +
-            //    " via cl_2");
-
-            //Client c_init = new Client("127.0.0.1", 5000);
-            //int maxArmy;
-            //int[,] F;
-            //(maxArmy, F) = c_init.RecieveInitField();
-            //Console.WriteLine(maxArmy);
-            //int rowLength = F.GetLength(0);
-            //int colLength = F.GetLength(1);
-            //for (int i = 0; i < rowLength; i++)
-            //{
-            //    for (int j = 0; j < colLength; j++)
-            //    {
-            //        Console.Write(string.Format("{0} ", F[i, j]));
-            //    }
-            //    Console.Write(Environment.NewLine);
-            //}
-
-            Client cl_place = new Client("127.0.0.1", 5000);
-            cl_place.SendPlacement(77, new int[,]
-                { { 1, 2, 3 }, { 4, 5, 6 },  },
-                new double[] { 5.7, 14.22, 6.6 });
-        }
     }
 }

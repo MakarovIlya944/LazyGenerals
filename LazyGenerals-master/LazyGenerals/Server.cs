@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
-namespace ServerClientSample
+namespace LazyServer
 {
-    class Server
+    public class Server
     {
         private readonly int portNo;
         private readonly string serverIP;
@@ -69,7 +69,7 @@ namespace ServerClientSample
             int n_power = int.Parse(tokens[shift_index - 1]);
             double[] power = new double[n_power];
             for (int i = 0; i < n_power; i++)
-            {  power[i] = double.Parse(tokens[shift_index + i]); }
+            { power[i] = double.Parse(tokens[shift_index + i]); }
             return (maxArmy, army, power);
         }
 
@@ -149,45 +149,6 @@ namespace ServerClientSample
         {
             client.Close();
             listener.Stop();
-        }
-
-        static void Main(string[] args)
-        {
-            //Server s_1 = new Server("127.0.0.1", 5000);
-            //Server s_2 = new Server("127.0.0.1", 5001);
-            //Console.WriteLine(s_1._RecieveData() +
-            //    " by s_1");
-            //Console.WriteLine(s_2._RecieveData() +
-            //    " via s_2");
-            //s_1._SendData("Returned from s_1");
-            //s_2._SendData("Backed from s_2");
-
-            //Server s_init = new Server("127.0.0.1", 5000);
-            //s_init.SendInitField(100, new int[,]
-            //    { { 1, 2, 3 }, { 4, 5, 6 },  });
-
-            Server s_place = new Server("127.0.0.1", 5000);
-            int maxArmy;
-            int[,] army;
-            double[] power;
-            (maxArmy, army, power) = s_place.RecievePlacement();
-            Console.WriteLine(maxArmy);
-            int army_rowLength = army.GetLength(0);
-            int army_colLength = army.GetLength(1);
-            for (int i = 0; i < army_rowLength; i++)
-            {
-                for (int j = 0; j < army_colLength; j++)
-                {
-                    Console.Write(string.Format("{0} ", army[i, j]));
-                }
-                Console.Write(Environment.NewLine);
-            }
-            Console.WriteLine();
-            int power_length = power.GetLength(0);
-            for (int i = 0; i < power_length; i++)
-            {
-                Console.Write(string.Format("{0} ", power[i]));
-            }
         }
     }
 }
