@@ -25,12 +25,14 @@ namespace LazyGeneral
 		public Graphics g { set; get; }
 		
 
-		public bool Init(int _w, int _h)
+		public bool Init(int _w, int _h, int _wCell, int _hCell, int[,] _field)
 		{
 			if(_w < 0 || _h < 0)
 				return false;
 			widthWindow = _w;
 			heightWindow = _h;
+            width = _wCell;
+            height = _hCell;
 
 			dx = (widthWindow - netBorder * 2) / width;
 			dy = (heightWindow - netBorder * 2) / height;
@@ -39,12 +41,11 @@ namespace LazyGeneral
 			for (int i = 0; i < width; i++)
 				gameFiled[i] = new cellType[height];
 
-			gameFiled[2][4] = cellType.water;
-			gameFiled[1][4] = cellType.water;
-			gameFiled[3][3] = cellType.water;
-			
-			
-			return true;
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++)
+                    gameFiled[i][j] = (cellType)_field[i, j];
+
+            return true;
 		}
 
 		public bool PaintBattleField()

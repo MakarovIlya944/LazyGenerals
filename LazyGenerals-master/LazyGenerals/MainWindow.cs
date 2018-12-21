@@ -47,10 +47,8 @@ namespace LazyGeneral
 
         private void buttonConnectGame_Click(object sender, EventArgs e)
         {
-            //create client instance
-            Client client = new Client("127.0.0.1", 5000);
             //create game window
-            GameWindow g = new GameWindow(client);
+            GameWindow g = new GameWindow(new Client("127.0.0.1", 5000));
             //recieve init field from server
             //send to server start placement
             //while true

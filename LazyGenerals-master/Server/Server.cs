@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using LazyGeneral;
 
 namespace LazyServer
 {
@@ -15,6 +16,53 @@ namespace LazyServer
         private TcpListener listener;
         private TcpClient client;
         private NetworkStream nwStream;
+        static private Thread serv1,serv2;
+        private List<(TcpClient, NetworkStream)> listClients = new List<(TcpClient, NetworkStream)>();
+        static public int connections = 0;
+
+        private class MyThread
+        {
+            Thread thread;
+
+            MyThread(int mode)
+            {
+                thread = new Thread(this.)
+            }
+        }
+
+
+        static void Main(string[] args)
+        {
+            Server server = new Server("127.0.0.1", 5000);
+            Logic();
+        }
+
+        static public void Logic()
+        {
+            int end = 3;
+            Stages start = new Stages();
+            start.StartStage();
+            while (end == 3)
+            {
+                start.CyclicStage();
+                end = start.EndStage();
+            }
+            switch (end)
+            {
+                case 0:
+                    Console.WriteLine("Первый победил");
+                    break;
+
+                case 1:
+                    Console.WriteLine("Второй победил");
+                    break;
+
+                case 2:
+                    Console.WriteLine("Ничья");
+                    break;
+            }
+            Console.ReadLine();
+        }
 
         public Server(string serverIP, int portNo)
         {
@@ -24,14 +72,36 @@ namespace LazyServer
             //---listen at the specified IP and port no.---
             IPAddress localAdd = IPAddress.Parse(serverIP);
             listener = new TcpListener(localAdd, portNo);
-            //Console.WriteLine("Listening...");
             listener.Start();
 
+            Console.WriteLine($"Waiting connections on {serverIP}:{portNo} .....");
             //---incoming client connected---
-            client = listener.AcceptTcpClient();
-
+            for (int i = 0; i < 2; i++)
+            {
+                client = listener.AcceptTcpClient();
+                nwStream = client.GetStream();
+                listClients.Add((client, nwStream));
+                Console.WriteLine("Client connected!");
+                _SendData(i.ToString());
+                connections++;
+            }
             //---get the incoming data through a network stream---
-            nwStream = client.GetStream();
+        }
+
+        static public void ac(object y)
+        {
+
+        }
+
+        static public void SendInfo(int a,int b, int d, Battleground.types[,] c)
+        {
+            var rqw = new ParameterizedThreadStart(ac);
+            serv1 = new Thread(new ThreadStart(ac));
+        }
+
+        static public ValueTuple<int, double[], int[], int[,]> GetInfo()
+        {
+
         }
 
         public void SendInitField(int maxArmy, int[,] F)
@@ -87,6 +157,20 @@ namespace LazyServer
             data += " " + power.Length;
             for (int i = 0; i < power.Length; i++)
             { data += " " + power[i].ToString(); }
+            _SendData(data);
+        }
+
+       static public void SendInit(int x, int y, int maxPower, Battleground.types[,] field)
+        {
+            string data = $"{x} {y} {maxPower}";
+            int n = field.GetLength(0);
+            int m = field.GetLength(1);
+            data += " " + n + " " + m;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                { data += " " + (int)field[i, j]; }
+            }
             _SendData(data);
         }
 

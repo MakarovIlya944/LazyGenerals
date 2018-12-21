@@ -25,7 +25,7 @@ namespace LazyServer
             nwStream = client.GetStream();
         }
 
-        public ValueTuple<int, int[,]> RecieveInitField()
+        public ValueTuple<int, int, int, int[,]> RecieveInitField()
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
@@ -42,7 +42,7 @@ namespace LazyServer
                     F[i, j] = int.Parse(tokens[index]);
                 }
             }
-            return (maxArmy, F);
+            return (maxArmy, n ,m, F);
         }
 
         public ValueTuple<int, int[,], double[]> RecievePlacement()

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LazyGeneral
 {
-    class Battleground
+    public class Battleground
     {
         //=======================Конструктор=======================//
         public Battleground(string option)

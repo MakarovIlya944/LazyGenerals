@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LazyServer;
 
 namespace LazyGeneral
 {
@@ -17,8 +18,8 @@ namespace LazyGeneral
             for (int i = 0; i < field.SizeX; i++)
                 for (int j = 0; j < field.SizeY; j++)
                     poi[i, j] = (int)field.tile[i, j];
-            SendInfo(field.SizeX, field.SizeY, field.tile, 15000);
-
+            Server.SendInfo(field.SizeX, field.SizeY, 15000, field.tile);
+            
             // Обрати внимание!
             Army[,] A = new Army[2, 2];
             int side = new int();
@@ -28,7 +29,7 @@ namespace LazyGeneral
             // Получаю команду, силы армий, их номера, их локации
             for (int j = 0; j < 2; j++)
             {
-                (side, powerInfo, numberInfo, locationInfo) = GetInfo();
+                (side, powerInfo, numberInfo, locationInfo) = Server.GetInfo();
                 for (int i = 0; i < armyCount; i++)
                     A[numberInfo[i], side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]); ;
             }

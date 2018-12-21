@@ -16,41 +16,22 @@ namespace LazyGeneral
 		private GameGraphics gamedrive = new GameGraphics();
         private bool isLight = false;
         private double maxOneArmy = 50.0, maxAllArmy = 100.0;
-        private readonly bool isServer;
-        private Server server;
         private Client client;
-        private Stages stages;
         private bool isEnd;
-
-        public GameWindow(Server server)
-        {
-            InitializeComponent();
-            this.server = server;
-            this.client = null;
-            this.isServer = true;
-            this.isEnd = false;
-            gamedrive.Init(this.pictureBox1.Width, this.pictureBox1.Height);
-
-            //create core logic
-            //нужно чтобы стагес в конструкторе принимал Server и Client
-            stages = new Stages();
-            stages.StartStage();
-            //send init field to client
-            server.SendInitField();
-        }
 
         public GameWindow(Client client)
 		{
 			InitializeComponent();
-            this.server = null;
             this.client = client;
-            this.isServer = false;
-            this.isEnd = false;
-            gamedrive.Init(this.pictureBox1.Width, this.pictureBox1.Height);
-
-            stages = null;
+            isEnd = false;
+            int w, h;
+            int m;
+            int[,] field;
             //recieve init field from server
-            client.RecieveInitField();
+            (w, h, m, field) = client.RecieveInitField();
+            gamedrive.Init(pictureBox1.Width, pictureBox1.Height,w,h,field);
+            maxAllArmy = m;
+            maxOneArmy = m / 4 * 3;
         }
 
         private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
