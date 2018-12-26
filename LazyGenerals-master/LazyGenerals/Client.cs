@@ -70,6 +70,23 @@ namespace LazyServer
             return (maxArmy, army, power);
         }
 
+        public void SendInitPlacement(int team, int[] order, double[] power, int[,] army)
+        {
+            string data = maxArmy.ToString();
+            int n = army.GetLength(0);
+            int m = army.GetLength(1);
+            data += " " + n + " " + m;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                { data += " " + army[i, j]; }
+            }
+            data += " " + power.Length;
+            for (int i = 0; i < power.Length; i++)
+            { data += " " + power[i].ToString(); }
+            _SendData(data);
+        }
+
         public void SendPlacement(int maxArmy, int[,] army, double[] power)
         {
             string data = maxArmy.ToString();

@@ -21,44 +21,21 @@ namespace LazyGeneral
 		private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
 		{
 			Graphics g = pe.Graphics;
-			System.Drawing.Pen myPen;
-			myPen = new System.Drawing.Pen(System.Drawing.Color.Tomato);
+			Pen myPen;
+			myPen = new Pen(Color.Tomato);
 			g.DrawEllipse(myPen, 30, 150, 20, 50);
 		}
 
         private void buttonStartGame_Click(object sender, EventArgs e)
         {
-            //create server instance
-            Server server = new Server("127.0.0.1", 5000);
-            //create game window
-            GameWindow g = new GameWindow(server);
-            //create core logic
-            //send init field to client
-            //recieve client start placement
-            //while not end
-            //  make armies moves
-            //  recieve client armies moves
-            //  calc battles core logic
-            //  send to client field state
-
+            GameWindow g = new GameWindow(new Client("127.0.0.1", 5000), 1);
             g.Show();
             Hide();
         }
 
         private void buttonConnectGame_Click(object sender, EventArgs e)
         {
-            //create client instance
-            Client client = new Client("127.0.0.1", 5000);
-            //create game window
-            GameWindow g = new GameWindow(client);
-            //recieve init field from server
-            //send to server start placement
-            //while true
-            //  recieve field state
-            //  if is end: return 
-            //  make armies moves
-            //  send to server armies moves
-
+            GameWindow g = new GameWindow(new Client("127.0.0.1", 5000), 2);
             g.Show();
             Hide();
         }

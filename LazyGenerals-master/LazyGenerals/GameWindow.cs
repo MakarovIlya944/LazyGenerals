@@ -16,41 +16,35 @@ namespace LazyGeneral
 		private GameGraphics gamedrive = new GameGraphics();
         private bool isLight = false;
         private double maxOneArmy = 50.0, maxAllArmy = 100.0;
-        private readonly bool isServer;
-        private Server server;
+        private int w, h;
         private Client client;
-        private Stages stages;
-        private bool isEnd;
+        private bool isEnd, isInitPhase = true;
+        private int team;
+        private List<Point> armies = new List<Point>();
+        private int activeArmyNum = -1;
+        private int activeLayer = -1;
+        private Point[][] curSteps = new Point[3][];
+        private int[] curLevels = new int[5];
 
-        public GameWindow(Server server)
-        {
-            InitializeComponent();
-            this.server = server;
-            this.client = null;
-            this.isServer = true;
-            this.isEnd = false;
-            gamedrive.Init(this.pictureBox1.Width, this.pictureBox1.Height);
-
-            //create core logic
-            //нужно чтобы стагес в конструкторе принимал Server и Client
-            stages = new Stages();
-            stages.StartStage();
-            //send init field to client
-            server.SendInitField();
-        }
-
-        public GameWindow(Client client)
+        public GameWindow(Client client, int t)
 		{
+            for (int i = 0; i < 3; i++)
+            { curSteps[i] = new Point[5]; curSteps[i].Initialize(); }
+            for (int i = 0; i < 5; i++)
+                curLevels[i] = 0;
+            team = t;
 			InitializeComponent();
-            this.server = null;
             this.client = client;
-            this.isServer = false;
-            this.isEnd = false;
-            gamedrive.Init(this.pictureBox1.Width, this.pictureBox1.Height);
-
-            stages = null;
-            //recieve init field from server
-            client.RecieveInitField();
+            isEnd = false;
+            client.SendArmy(team, new int[1,1]);
+            int[,] F;
+            int max;
+            (max,F) = client.RecieveInitField();
+            maxAllArmy = max;
+            maxOneArmy = max * 4 / 3;
+            w = F.GetLength(0);
+            h = F.GetLength(1);
+            gamedrive.Init(pictureBox1.Width, pictureBox1.Height, F.GetLength(0), F.GetLength(1), F);
         }
 
         private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
@@ -63,11 +57,57 @@ namespace LazyGeneral
 
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
+            Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
+            if (isInitPhase)
+            {
+                if (pos.X != -1)
+                {
+                    bool exists = armies.Exists(x => x == pos);
+                    if (activeArmyNum != -1 && !exists)
+                    {
+                        armies[activeArmyNum] = pos;
+                        activeArmyNum = -1;
+                    }
+                    else if(activeArmyNum == -1 && exists)
+                        activeArmyNum = armies.FindIndex(x => x == pos);
+                }
+            }
+            else
+            {
+                if (pos.X != -1)
+                {
+                    int layer = -1;
+                    if (curSteps[0].Any(x => x == pos))
+                        layer = 0;
+                    else if (curSteps[1].Any(x => x == pos))
+                        layer = 1;
+                    else if (curSteps[2].Any(x => x == pos))
+                        layer = 2;
+                    if (activeArmyNum != -1 && layer == -1)
+                    {
+                        if (activeLayer < 1)
+                            activeLayer++;
+                        curSteps[activeLayer][activeArmyNum] = pos;
+                        curLevels[activeArmyNum]++;
+                        activeArmyNum = -1;
+                        activeLayer = -1;
+                    }
+                    else if (activeArmyNum == -1 && layer != -1)
+                    {
+                        activeArmyNum = curSteps[layer].Where(x => x == pos);
+                        if (Math.Abs(armies[activeArmyNum].X - pos.X) < 2 ^ Math.Abs(armies[activeArmyNum].Y - pos.Y) < 2)
+                            if (SendStep())
+                    }
+                    activeArmyNum = armies.FindIndex(x => x == pos);
+                }
+            }
+
+
             //if click select
             //если нажато на армию, чтобы ее выбрать(а не походить)
-                //запоминаем какая армия выбрана
-                //return
-			isLight = true;
+            //запоминаем какая армия выбрана
+            //return
+            isLight = true;
 			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
             //MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
 
@@ -197,10 +237,20 @@ namespace LazyGeneral
             labelA5num.Text = Math.Round((trackBarA5.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
         }
-
-        private void gameInitGroup_Enter(object sender, EventArgs e)
+     
+        private void buttonAction_Click(object sender, EventArgs e)
         {
+            if (isInitPhase)
+            {
+                isInitPhase = false;
+                client.SendInitPlacement();
+                for(int i=0;i<5;i++)
+                    curSteps[i, 0] = armies[i];
+            }
+            else
+            {
 
+            }
         }
 
         private void buttonAReady_Click(object sender, EventArgs e)
@@ -216,6 +266,16 @@ namespace LazyGeneral
             pictureBox1.Enabled = true;
             gameInitGroup.Enabled = false;
             gameInitGroup.Visible = false;
+
+            int _h = team == 1 ? 0 : h - 1;
+            armies.Add(new Point(1, _h));
+            armies.Add(new Point(2, _h));
+            armies.Add(new Point(3, _h));
+            armies.Add(new Point(4, _h));
+            armies.Add(new Point(5, _h));
+
+            buttonAction.Visible = true;
+            buttonAction.Enabled = true;
         }
     }
 }

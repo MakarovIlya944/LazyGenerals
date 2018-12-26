@@ -52,6 +52,7 @@
             this.labelA3 = new System.Windows.Forms.Label();
             this.labelA2 = new System.Windows.Forms.Label();
             this.labelA1 = new System.Windows.Forms.Label();
+            this.buttonAction = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gameInitGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarA5)).BeginInit();
@@ -104,7 +105,6 @@
             this.gameInitGroup.TabIndex = 1;
             this.gameInitGroup.TabStop = false;
             this.gameInitGroup.Text = "Баланс армии";
-            this.gameInitGroup.Enter += new System.EventHandler(this.gameInitGroup_Enter);
             // 
             // buttonAReady
             // 
@@ -330,11 +330,24 @@
             this.labelA1.TabIndex = 0;
             this.labelA1.Text = "Мощь первой армии";
             // 
+            // buttonAction
+            // 
+            this.buttonAction.Enabled = false;
+            this.buttonAction.Location = new System.Drawing.Point(713, 416);
+            this.buttonAction.Name = "buttonAction";
+            this.buttonAction.Size = new System.Drawing.Size(75, 23);
+            this.buttonAction.TabIndex = 2;
+            this.buttonAction.Text = "Готово";
+            this.buttonAction.UseVisualStyleBackColor = true;
+            this.buttonAction.Visible = false;
+            this.buttonAction.Click += new System.EventHandler(this.buttonAction_Click);
+            // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 451);
+            this.Controls.Add(this.buttonAction);
             this.Controls.Add(this.gameInitGroup);
             this.Controls.Add(this.pictureBox1);
             this.Name = "GameWindow";
@@ -378,5 +391,6 @@
         private System.Windows.Forms.Label labelA3;
         private System.Windows.Forms.Label labelA2;
         private System.Windows.Forms.Label labelA1;
+        private System.Windows.Forms.Button buttonAction;
     }
 }
