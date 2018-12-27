@@ -41,7 +41,7 @@ namespace LazyGeneral
             int max;
             (max,F) = client.RecieveInitField();
             maxAllArmy = max;
-            maxOneArmy = max * 4 / 3;
+            maxOneArmy = max * 0.75;
             w = F.GetLength(0);
             h = F.GetLength(1);
             gamedrive.Init(pictureBox1.Width, pictureBox1.Height, F.GetLength(0), F.GetLength(1), F);
@@ -86,19 +86,22 @@ namespace LazyGeneral
                     if (activeArmyNum != -1 && layer == -1)
                     {
                         if (activeLayer < 1)
-                            activeLayer++;
+                           { activeLayer++;
+			    curLevels[activeArmyNum]++;}
                         curSteps[activeLayer][activeArmyNum] = pos;
-                        curLevels[activeArmyNum]++;
+                        
                         activeArmyNum = -1;
                         activeLayer = -1;
                     }
                     else if (activeArmyNum == -1 && layer != -1)
                     {
-                        activeArmyNum = curSteps[layer].Where(x => x == pos);
-                        if (Math.Abs(armies[activeArmyNum].X - pos.X) < 2 ^ Math.Abs(armies[activeArmyNum].Y - pos.Y) < 2)
-                            if (SendStep())
+                        activeArmyNum = curSteps[layer].Where(x => x == pos)[0];
+                        //if (Math.Abs(curSteps[layer][activeArmyNum].X - pos.X) < 2 ^ Math.Abs(curSteps[layer][activeArmyNum].Y - pos.Y) < 2)
+                          //  if (SendStep())
+			  activeLayer =layer;
+			    
                     }
-                    activeArmyNum = armies.FindIndex(x => x == pos);
+                    
                 }
             }
 
