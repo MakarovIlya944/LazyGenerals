@@ -58,152 +58,47 @@ namespace LazyGeneral
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
             Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
-            if (isInitPhase)
+            if (isInitPhase && pos.X != -1)
             {
-                if (pos.X != -1)
+                bool exists = armies.Exists(x => x == pos);
+                if (activeArmyNum != -1 && !exists)
                 {
-                    bool exists = armies.Exists(x => x == pos);
-                    if (activeArmyNum != -1 && !exists)
-                    {
-                        armies[activeArmyNum] = pos;
-                        activeArmyNum = -1;
-                    }
-                    else if(activeArmyNum == -1 && exists)
-                        activeArmyNum = armies.FindIndex(x => x == pos);
+                    armies[activeArmyNum] = pos;
+                    activeArmyNum = -1;
                 }
+                else if (activeArmyNum == -1 && exists)
+                    activeArmyNum = armies.FindIndex(x => x == pos);
             }
             else
             {
-                if (pos.X != -1)
+                int layer = -1;
+                if (curSteps[0].Any(x => x == pos))
+                    layer = 0;
+                else if (curSteps[1].Any(x => x == pos))
+                    layer = 1;
+                else if (curSteps[2].Any(x => x == pos))
+                    layer = 2;
+                if (activeArmyNum != -1 && layer == -1)
                 {
-                    int layer = -1;
-                    if (curSteps[0].Any(x => x == pos))
-                        layer = 0;
-                    else if (curSteps[1].Any(x => x == pos))
-                        layer = 1;
-                    else if (curSteps[2].Any(x => x == pos))
-                        layer = 2;
-                    if (activeArmyNum != -1 && layer == -1)
+                    if ((Math.Abs(curSteps[activeLayer][activeArmyNum].X - pos.X) < 2 ^ Math.Abs(curSteps[activeLayer][activeArmyNum].Y - pos.Y) < 2) && SendStep())
                     {
                         if (activeLayer < 1)
-                           { activeLayer++;
-			    curLevels[activeArmyNum]++;}
+                        {
+                            activeLayer++;
+                            curLevels[activeArmyNum]++;
+                        }
                         curSteps[activeLayer][activeArmyNum] = pos;
-                        
+
                         activeArmyNum = -1;
                         activeLayer = -1;
                     }
-                    else if (activeArmyNum == -1 && layer != -1)
-                    {
-                        activeArmyNum = curSteps[layer].Where(x => x == pos)[0];
-                        //if (Math.Abs(curSteps[layer][activeArmyNum].X - pos.X) < 2 ^ Math.Abs(curSteps[layer][activeArmyNum].Y - pos.Y) < 2)
-                          //  if (SendStep())
-			  activeLayer =layer;
-			    
-                    }
-                    
                 }
-            }
-
-
-            //if click select
-            //если нажато на армию, чтобы ее выбрать(а не походить)
-            //запоминаем какая армия выбрана
-            //return
-            isLight = true;
-			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
-            //MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
-
-            //if first palcement not ended
-            //если расстановка армий не завершена 
-            //{
-            //accumulate placement
-            //накопить (запомнить) стартовое расположние армий
-            //}
-            //else
-            //{
-            //if i here first time now
-            //когда расстановка завершена отправляем данные
-            //{
-            //if (isServer)
-            //{
-            //    //recieve client start placement
-                  // если сервер, то получаем данные
-            //    server.RecievePlacement();
-            //}
-            //else
-            //{
-            //    //send to server start placement
-                  // если клиент, то отправляем
-            //    client.SendPlacement();
-            //}
-            //}
-            if (isServer)
-            {
-                if (isEnd) return;
-                //if need server move
-                // если сервер не отходил все свои ходы 
-                //{
-                    //move army
-                    // происходит циклическая стадия
-                    // запоминаем ходы(какая армия куда походила)  
-                    // в stages должно быть учтено какая армия куда ходит
-                    //return;
-                //}
-                //if all moves done
-                // если сервер отходил 
-                //{
-                    //while need get client move
-                    //{
-                        //recieve client armies moves
-                        // сервер получает все ходы клиента
-                        server.RecieveArmy();
-                //}
-                //}
-
-                //calc battles core logic
-                // обработка полного хода
-                //stages.CyclicStage();
-                isEnd = stages.EndStage() == 3;
-                if (!isEnd)
+                else if (activeArmyNum == -1 && layer != -1)
                 {
-                    //send to client NOT_END
-                    server.SendIsCorrect(false);
-                    //send to client field state
-                    server.SendPlacement();
-                }
-                else
-                {
-                    //send to client END
-                    server.SendIsCorrect(true);
-                    //send to client WINNER
+                    activeArmyNum = curSteps[layer].ToList().FindIndex(x => x == pos);
+                    activeLayer = layer;
                 }
             }
-            else // код клиента
-            {
-                if (isEnd) return;
-                //if NOT all moves done
-                //{
-                    //send to server army move
-                    client.SendArmy(/*?*/, new int[]
-                    { pos.X, pos.Y });
-                //}
-                //else
-                //{
-                    //recieve from server IS_END
-                    isEnd = client.RecieveIsCorrect();
-                    if (!isEnd)
-                    {
-                        //recieve from server field state
-                        client.RecievePlacement();
-                    }
-                    else
-                    {
-                        //recieve from server WINNER
-                        //display WINNER
-                    }
-            }
-            //}
         }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -248,11 +143,11 @@ namespace LazyGeneral
                 isInitPhase = false;
                 client.SendInitPlacement();
                 for(int i=0;i<5;i++)
-                    curSteps[i, 0] = armies[i];
+                    curSteps[i][0] = armies[i];
             }
             else
             {
-
+                client.SendOrder();
             }
         }
 
