@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LazyServer;
 
 namespace LazyGeneral
 {
@@ -82,7 +83,7 @@ namespace LazyGeneral
                 }
 
                 //server.SendXY(side, powerInfo, numberInfo, locationInfo);
-                SendInfo(side, powerInfo, numberInfo, locationInfo);
+                Server.SendInfo(side, powerInfo, numberInfo, locationInfo);
             }
         }
 

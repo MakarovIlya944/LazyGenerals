@@ -80,7 +80,7 @@ namespace LazyGeneral
                     layer = 2;
                 if (activeArmyNum != -1 && layer == -1)
                 {
-                    if ((Math.Abs(curSteps[activeLayer][activeArmyNum].X - pos.X) < 2 ^ Math.Abs(curSteps[activeLayer][activeArmyNum].Y - pos.Y) < 2) && SendStep())
+                    if ((Math.Abs(curSteps[activeLayer][activeArmyNum].X - pos.X) < 2 ^ Math.Abs(curSteps[activeLayer][activeArmyNum].Y - pos.Y) < 2) && client.SendXY( team, activeArmyNum, pos.X, pos.Y))
                     {
                         if (activeLayer < 1)
                         {
@@ -141,7 +141,21 @@ namespace LazyGeneral
             if (isInitPhase)
             {
                 isInitPhase = false;
-                client.SendInitPlacement();
+                int[] order = new int[5];
+                int[,] position = new int[5, 2];
+                double[] power = new double[5];
+                for (int i = 0; i < 5; i++)
+                {
+                    order[i] = i;
+                    position[i, 0] = armies[i].X;
+                    position[i, 1] = armies[i].Y;
+                }
+                power[0] = trackBarA1.Value * maxOneArmy / 100.0;
+                power[1] = trackBarA2.Value * maxOneArmy / 100.0;
+                power[2] = trackBarA3.Value * maxOneArmy / 100.0;
+                power[3] = trackBarA4.Value * maxOneArmy / 100.0;
+                power[4] = trackBarA5.Value * maxOneArmy / 100.0;
+                client.SendInitPlacement(team, order, power, position);
                 for(int i=0;i<5;i++)
                     curSteps[i][0] = armies[i];
             }

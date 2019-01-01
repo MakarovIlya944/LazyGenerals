@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
@@ -104,11 +105,12 @@ namespace LazyServer
             _SendData(data);
         }
 
-        public void SendXY(int team, int id, int x, int y)
+        public bool SendXY(int team, int id, int x, int y)
         {
             string data = team.ToString() +
                 " " + id + " " + x + " " + y;
             _SendData(data);
+            return RecieveIsCorrect();
         }
 
         public bool RecieveIsCorrect()
