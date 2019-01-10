@@ -121,6 +121,13 @@ namespace LazyServer
             return (team, power, army);
         }
 
+        static public int RecvHello()
+        {
+            string data = _RecieveData();
+            int connect = int.Parse(data);
+            return connect;
+        }
+
         static public ValueTuple<int, int, int[]> GetInfoMoveCheck()
         {
             string data = _RecieveData();
@@ -142,8 +149,10 @@ namespace LazyServer
             int team = int.Parse(tokens[0]);
             int n = int.Parse(tokens[1]);
             int[,] army = new int[n * 2, 3];
-
-            return (team, army)
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < 3; j++)
+                    army[i, j] = int.Parse(tokens[2 + i * n + j]);
+            return (team, army);
         }
 
         public Server(string serverIP, int portNo)
