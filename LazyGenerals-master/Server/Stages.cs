@@ -24,7 +24,6 @@ namespace LazyGeneral
             Army[,] A = new Army[2, 2];
             int side = new int();
             double[] powerInfo;
-            int[] numberInfo;
             int[,] locationInfo;
             // Получаю команду, силы армий, их номера, их локации
             for (int j = 0; j < 2; j++)
