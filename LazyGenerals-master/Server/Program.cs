@@ -52,17 +52,98 @@ namespace LazyServer
 
         static public void SendInfo(int endState)
         {
-
+            string data = endState.ToString();
+            _SendData(data);
         }
 
         static public void SendInfo(int w, int h, int power, Battleground.types[,] field)
         {
-
+            string data = power.ToString();
+            int n = field.GetLength(0);
+            int m = field.GetLength(1);
+            data += " " + n + " " + m;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                { data += " " + field[i, j]; }
+            }
+            _SendData(data);
         }
 
-        static public ValueTuple<> GetInfo()
+        static public void SendInfo(int side, double[] power, int[] numbers, int[,] location)
         {
+            string data = side.ToString();
+            int n = power.Length;
+            data += " " + n;
+            for (int i = 0; i < n; i++)
+                data += " " + power[i];
+            for (int i = 0; i < n; i++)
+                data += " " + numbers[i];
+            for (int i = 0; i < n; i++)
+                data += " " + location[i, 0] + " " + location[i, 1];
+            _SendData(data);
+        }
 
+        static public void SendInfo(bool check, int client)
+        {
+            string data = check.ToString();
+            _SendData(data, client);
+        }
+
+        static public ValueTuple<int, double[], int[,]> GetInfoStart()
+        {
+            string data = _RecieveData();
+            string[] tokens = data.Split(new string[]
+                {" "}, StringSplitOptions.RemoveEmptyEntries);
+            int team = int.Parse(tokens[0]);
+            int n = int.Parse(tokens[1]);
+            int[] order = new int[n];
+            int ind = 2;
+            for (int i = 0; i < n; i++)
+            { order[i] = int.Parse(tokens[ind++]); }
+
+            n = int.Parse(tokens[ind++]);
+            double[] power = new double[n];
+            for (int i = 0; i < n; i++)
+            { power[i] = double.Parse(tokens[ind++]); }
+
+            n = int.Parse(tokens[ind++]);
+            int m = int.Parse(tokens[ind++]);
+            int[,] army = new int[n, m];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    int index = i * m + j + 3;
+                    army[i, j] = int.Parse(tokens[index]);
+                }
+            }
+            return (team, power, army);
+        }
+
+        static public ValueTuple<int, int, int[]> GetInfoMoveCheck()
+        {
+            string data = _RecieveData();
+            string[] tokens = data.Split(new string[]
+                {" "}, StringSplitOptions.RemoveEmptyEntries);
+            int army = int.Parse(tokens[0]);
+            int team = int.Parse(tokens[1]);
+            int[] location = new int[2];
+            location[0] = int.Parse(tokens[2]);
+            location[1] = int.Parse(tokens[3]);
+            return (army, team, location);
+        }
+
+        static public ValueTuple<int, int[,]> GetInfoOrders()
+        {
+            string data = _RecieveData();
+            string[] tokens = data.Split(new string[]
+                {" "}, StringSplitOptions.RemoveEmptyEntries);
+            int team = int.Parse(tokens[0]);
+            int n = int.Parse(tokens[1]);
+            int[,] army = new int[n * 2, 3];
+
+            return (team, army)
         }
 
         public Server(string serverIP, int portNo)
@@ -131,7 +212,7 @@ namespace LazyServer
             return (maxArmy, army, power);
         }
 
-        public ValueTuple<int, int[], double[], int[,]> RecieveInitPlacement()
+        public ValueTuple<int, double[], int[,]> RecieveInitPlacement()
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
@@ -159,7 +240,7 @@ namespace LazyServer
                     army[i, j] = int.Parse(tokens[index]);
                 }
             }
-            return (team, order, power, army);
+            return (team, power, army);
         }
 
         public void SendPlacement(int maxArmy, int[,] army, double[] power)

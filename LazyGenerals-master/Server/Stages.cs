@@ -29,9 +29,9 @@ namespace LazyGeneral
             // Получаю команду, силы армий, их номера, их локации
             for (int j = 0; j < 2; j++)
             {
-                (side, powerInfo, numberInfo, locationInfo) = Server.GetInfo();
+                (side, powerInfo, locationInfo) = Server.GetInfoStart();
                 for (int i = 0; i < armyCount; i++)
-                    A[numberInfo[i], side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]); ;
+                    A[i, side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, i); 
             }
             game = new Phases(A, armyCount, poi);
         }
