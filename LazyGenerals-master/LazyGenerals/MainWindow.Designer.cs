@@ -32,11 +32,7 @@
             this.buttonStartGame = new System.Windows.Forms.Button();
             this.buttonExit = new System.Windows.Forms.Button();
             this.buttonConnect = new System.Windows.Forms.Button();
-            this.groupBoxConnection = new System.Windows.Forms.GroupBox();
-            this.labelyourIpvalue = new System.Windows.Forms.Label();
-            this.labelyourIp = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.groupBoxConnection.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -50,7 +46,6 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // buttonStartGame
             // 
@@ -87,42 +82,11 @@
             this.buttonConnect.UseVisualStyleBackColor = false;
             this.buttonConnect.Click += new System.EventHandler(this.buttonConnectGame_Click);
             // 
-            // groupBoxConnection
-            // 
-            this.groupBoxConnection.Controls.Add(this.labelyourIpvalue);
-            this.groupBoxConnection.Controls.Add(this.labelyourIp);
-            this.groupBoxConnection.Location = new System.Drawing.Point(562, 59);
-            this.groupBoxConnection.Name = "groupBoxConnection";
-            this.groupBoxConnection.Size = new System.Drawing.Size(590, 343);
-            this.groupBoxConnection.TabIndex = 2;
-            this.groupBoxConnection.TabStop = false;
-            this.groupBoxConnection.Text = "Подключение";
-            this.groupBoxConnection.Enter += new System.EventHandler(this.groupBoxConnection_Enter);
-            // 
-            // labelyourIpvalue
-            // 
-            this.labelyourIpvalue.AutoSize = true;
-            this.labelyourIpvalue.Location = new System.Drawing.Point(152, 89);
-            this.labelyourIpvalue.Name = "labelyourIpvalue";
-            this.labelyourIpvalue.Size = new System.Drawing.Size(67, 13);
-            this.labelyourIpvalue.TabIndex = 1;
-            this.labelyourIpvalue.Text = "0:0:0:0:7777";
-            // 
-            // labelyourIp
-            // 
-            this.labelyourIp.AutoSize = true;
-            this.labelyourIp.Location = new System.Drawing.Point(87, 89);
-            this.labelyourIp.Name = "labelyourIp";
-            this.labelyourIp.Size = new System.Drawing.Size(50, 13);
-            this.labelyourIp.TabIndex = 0;
-            this.labelyourIp.Text = "Твой Ip: ";
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.groupBoxConnection);
             this.Controls.Add(this.buttonExit);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonStartGame);
@@ -130,8 +94,6 @@
             this.Name = "MainWindow";
             this.Text = "LazyGenerals";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.groupBoxConnection.ResumeLayout(false);
-            this.groupBoxConnection.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -142,9 +104,6 @@
 		private System.Windows.Forms.Button buttonStartGame;
 		private System.Windows.Forms.Button buttonExit;
         private System.Windows.Forms.Button buttonConnect;
-        private System.Windows.Forms.GroupBox groupBoxConnection;
-        private System.Windows.Forms.Label labelyourIpvalue;
-        private System.Windows.Forms.Label labelyourIp;
     }
 }
 

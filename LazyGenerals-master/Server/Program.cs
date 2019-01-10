@@ -169,7 +169,7 @@ namespace LazyServer
             //---listen at the specified IP and port no.---
             IPAddress localAdd = IPAddress.Parse(serverIP);
             listener1 = new TcpListener(localAdd, portNo);
-            listener2 = new TcpListener(localAdd, portNo);
+            listener2 = new TcpListener(localAdd, portNo+1);
             //Console.WriteLine("Listening...");
             listener1.Start();
             listener2.Start();
@@ -179,13 +179,14 @@ namespace LazyServer
             client1 = listener1.AcceptTcpClient();
             Console.WriteLine("Client connected");
 
-            //---get the incoming data through a network stream---
-            nwStream1 = client1.GetStream();
-
             client2 = listener2.AcceptTcpClient();
             Console.WriteLine("Client connected");
 
+            //---get the incoming data through a network stream---
+            nwStream1 = client1.GetStream();
             nwStream2 = client2.GetStream();
+            SendIsCorrect(true, 1);
+            SendIsCorrect(true, 2);
         }
 
         static void AsyncRecieve1()
