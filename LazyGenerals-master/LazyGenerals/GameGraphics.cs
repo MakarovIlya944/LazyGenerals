@@ -82,7 +82,7 @@ namespace LazyGeneral
 				return new Point(-1, -1);
 		}
 
-		public bool DrawArmy(int team, int x, int y)
+		public bool DrawArmy(Color c, int x, int y)
 		{
 			if (x < 0 || x > width || y < 0 || y > height)
 				return false;
@@ -92,11 +92,8 @@ namespace LazyGeneral
 			int _y = cellBorder + netBorder + dy * y + armyReduce;
 			int _dx = dx - cellBorder * 2 - armyReduce * 2;
 			int _dy = dy - cellBorder * 2 - armyReduce * 2;
-
-			if(team == 0)
-				g.DrawRectangle(new Pen(Color.DarkKhaki,4), _x, _y, _dx, _dy);
-			else
-				g.DrawRectangle(new Pen(Color.OrangeRed,4), _x, _y, _dx, _dy);
+            
+			g.DrawRectangle(new Pen(c,4), _x, _y, _dx, _dy);
 
 			return true;
 		}

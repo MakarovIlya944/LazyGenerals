@@ -14,7 +14,7 @@ namespace LazyGeneral
 	public partial class GameWindow : Form
 	{
 		private GameGraphics gamedrive = new GameGraphics();
-        private bool isLight = false;
+        private Color armyColorDefault, armyColorSelected;
         private double maxOneArmy = 50.0, maxAllArmy = 100.0;
         private int w, h;
         private Client client;
@@ -29,6 +29,8 @@ namespace LazyGeneral
 
         public GameWindow(Client client, int t)
 		{
+            armyColorDefault = t == 1 ? Color.DarkRed : Color.ForestGreen;
+            armyColorSelected = t == 1 ? Color.Crimson : Color.LimeGreen;
             for (int i = 0; i < 3; i++)
             { curSteps[i] = new Point[5]; curSteps[i].Initialize(); }
             team = t;
@@ -48,8 +50,19 @@ namespace LazyGeneral
 		{
 			gamedrive.g = pe.Graphics;
 			gamedrive.PaintBattleField();
-			gamedrive.DrawArmy(0, 2, 3);
-			gamedrive.DrawArmy(1, 4, 4);
+            if (isInitPhase)
+                for (int i = 0, n = armies.Count; i < n; i++)
+                    gamedrive.DrawArmy(armyColorDefault, armies[i].X, armies[i].Y);
+            else
+            {
+                for (int i = 0, n = curSteps.GetLength(0); i < n; i++)
+                    gamedrive.DrawArmy(armyColorDefault, curSteps[0][i].X, curSteps[0][i].Y);
+                for (int i = 0, n = curSteps.GetLength(0); i < n; i++)
+                {
+                    gamedrive.DrawArmy(armyColorSelected, curSteps[1][i].X, curSteps[1][i].Y);
+                    gamedrive.DrawArmy(armyColorSelected, curSteps[2][i].X, curSteps[2][i].Y);
+                }
+            }
 		}
 
 		private void pictureBox1_Click(object sender, EventArgs e)
