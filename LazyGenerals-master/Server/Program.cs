@@ -16,12 +16,13 @@ namespace LazyServer
         private TcpListener listener1, listener2;
         static private TcpClient client1, client2;
         static private NetworkStream nwStream1, nwStream2;
-        static private bool getMessage = false;
         static string recieveData;
 
         static void Main(string[] args)
         {
-            Server server = new Server("127.0.0.1", 5000);
+            string Host = System.Net.Dns.GetHostName();
+            string IP = System.Net.Dns.GetHostByName(Host).AddressList[0].ToString();
+            Server server = new Server(IP, 5000);
 
             Logic();
         }
@@ -196,7 +197,6 @@ namespace LazyServer
             int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
             //---convert the data received into a string---
             recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-            getMessage = true;
         }
 
         static void AsyncRecieve2()
@@ -206,7 +206,6 @@ namespace LazyServer
             int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
             //---convert the data received into a string---
             recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-            getMessage = true;
         }
 
         static private async void AsyncRecieve()
