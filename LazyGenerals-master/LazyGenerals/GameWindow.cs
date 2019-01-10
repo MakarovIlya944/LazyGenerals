@@ -108,30 +108,50 @@ namespace LazyGeneral
         {
             labelA1num.Text = Math.Round((trackBarA1.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value)* maxOneArmy/100.0).ToString();
+            trackBarA2.Maximum -= trackBarA1.Value;
+            trackBarA3.Maximum -= trackBarA1.Value;
+            trackBarA4.Maximum -= trackBarA1.Value;
+            trackBarA5.Maximum -= trackBarA1.Value;
         }
 
         private void trackBarA2_Scroll(object sender, EventArgs e)
         {
             labelA2num.Text = Math.Round((trackBarA2.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
+            trackBarA1.Maximum -= trackBarA2.Value;
+            trackBarA3.Maximum -= trackBarA2.Value;
+            trackBarA4.Maximum -= trackBarA2.Value;
+            trackBarA5.Maximum -= trackBarA2.Value;
         }
 
         private void trackBarA3_Scroll(object sender, EventArgs e)
         {
             labelA3num.Text = Math.Round((trackBarA3.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
+            trackBarA1.Maximum -= trackBarA3.Value;
+            trackBarA2.Maximum -= trackBarA3.Value;
+            trackBarA4.Maximum -= trackBarA3.Value;
+            trackBarA5.Maximum -= trackBarA3.Value;
         }
 
         private void trackBarA4_Scroll(object sender, EventArgs e)
         {
             labelA4num.Text = Math.Round((trackBarA4.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
+            trackBarA1.Maximum -= trackBarA4.Value;
+            trackBarA2.Maximum -= trackBarA4.Value;
+            trackBarA3.Maximum -= trackBarA4.Value;
+            trackBarA5.Maximum -= trackBarA4.Value;
         }
 
         private void trackBarA5_Scroll(object sender, EventArgs e)
         {
             labelA5num.Text = Math.Round((trackBarA5.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
+            trackBarA1.Maximum -= trackBarA5.Value;
+            trackBarA2.Maximum -= trackBarA5.Value;
+            trackBarA3.Maximum -= trackBarA5.Value;
+            trackBarA4.Maximum -= trackBarA5.Value;
         }
      
         private void buttonAction_Click(object sender, EventArgs e)
