@@ -21,30 +21,27 @@ namespace LazyGeneral
         private bool isEnd, isInitPhase = true;
         private int team;
         private List<Point> armies = new List<Point>();
+        private int[] order = new int[5];
         private int activeArmyNum = -1;
         private int activeLayer = -1;
+        private int approvedOrders = 0;
         private Point[][] curSteps = new Point[3][];
-        private int[] curLevels = new int[5];
 
         public GameWindow(Client client, int t)
 		{
             for (int i = 0; i < 3; i++)
             { curSteps[i] = new Point[5]; curSteps[i].Initialize(); }
-            for (int i = 0; i < 5; i++)
-                curLevels[i] = 0;
             team = t;
 			InitializeComponent();
             this.client = client;
             isEnd = false;
-            client.SendArmy(team, new int[1,1]);
+            client.SendHello(team);
             int[,] F;
             int max;
-            (max,F) = client.RecieveInitField();
+            (w,h,max,F) = client.RecieveInitField();
             maxAllArmy = max;
             maxOneArmy = max * 0.75;
-            w = F.GetLength(0);
-            h = F.GetLength(1);
-            gamedrive.Init(pictureBox1.Width, pictureBox1.Height, F.GetLength(0), F.GetLength(1), F);
+            gamedrive.Init(pictureBox1.Width, pictureBox1.Height, w, h, F);
         }
 
         private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
@@ -58,47 +55,48 @@ namespace LazyGeneral
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
             Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
-            if (isInitPhase && pos.X != -1)
-            {
-                bool exists = armies.Exists(x => x == pos);
-                if (activeArmyNum != -1 && !exists)
+            if(pos.X != -1)
+                if (isInitPhase)
                 {
-                    armies[activeArmyNum] = pos;
-                    activeArmyNum = -1;
-                }
-                else if (activeArmyNum == -1 && exists)
-                    activeArmyNum = armies.FindIndex(x => x == pos);
-            }
-            else
-            {
-                int layer = -1;
-                if (curSteps[0].Any(x => x == pos))
-                    layer = 0;
-                else if (curSteps[1].Any(x => x == pos))
-                    layer = 1;
-                else if (curSteps[2].Any(x => x == pos))
-                    layer = 2;
-                if (activeArmyNum != -1 && layer == -1)
-                {
-                    if ((Math.Abs(curSteps[activeLayer][activeArmyNum].X - pos.X) < 2 ^ Math.Abs(curSteps[activeLayer][activeArmyNum].Y - pos.Y) < 2) && client.SendXY( team, activeArmyNum, pos.X, pos.Y))
+                    bool exists = armies.Exists(x => x == pos);
+                    if (activeArmyNum != -1 && !exists)
                     {
-                        if (activeLayer < 1)
-                        {
-                            activeLayer++;
-                            curLevels[activeArmyNum]++;
-                        }
-                        curSteps[activeLayer][activeArmyNum] = pos;
-
+                        armies[activeArmyNum] = pos;
                         activeArmyNum = -1;
-                        activeLayer = -1;
+                    }
+                    else if (activeArmyNum == -1 && exists)
+                        activeArmyNum = armies.FindIndex(x => x == pos);
+                }
+                else
+                {
+                    int layer = -1;
+                    if (curSteps[0].Any(x => x == pos))
+                        layer = 0;
+                    else if (curSteps[1].Any(x => x == pos))
+                        layer = 1;
+                    else if (curSteps[2].Any(x => x == pos))
+                        layer = 2;
+                    if (activeArmyNum == -1 && layer != -1)
+                    {
+                        for (int activeArmyNum = 0, _n = curSteps.GetLength(layer); activeArmyNum < _n && curSteps[layer][activeArmyNum] != pos; activeArmyNum++);
+                        activeLayer = layer;
+                    }
+                    else if (activeLayer == 2)
+                    {
+                        activeArmyNum = -1;
+                    }
+                    else if (activeArmyNum != -1 && layer == -1)
+                    {
+                        client.SendXY(team, activeArmyNum, pos.X, pos.Y);
+                        if (!order.Any(x => x == activeArmyNum) && client.RecieveIsCorrect())
+                        {
+                            order[approvedOrders] = activeArmyNum;
+                            approvedOrders++;
+                            curSteps[activeLayer][activeArmyNum] = pos;
+                            activeLayer++;
+                        }
                     }
                 }
-                else if (activeArmyNum == -1 && layer != -1)
-                {
-                    activeArmyNum = curSteps[layer].ToList().FindIndex(x => x == pos);
-                    activeLayer = layer;
-                }
-            }
         }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -141,12 +139,10 @@ namespace LazyGeneral
             if (isInitPhase)
             {
                 isInitPhase = false;
-                int[] order = new int[5];
                 int[,] position = new int[5, 2];
                 double[] power = new double[5];
                 for (int i = 0; i < 5; i++)
                 {
-                    order[i] = i;
                     position[i, 0] = armies[i].X;
                     position[i, 1] = armies[i].Y;
                 }
@@ -155,13 +151,13 @@ namespace LazyGeneral
                 power[2] = trackBarA3.Value * maxOneArmy / 100.0;
                 power[3] = trackBarA4.Value * maxOneArmy / 100.0;
                 power[4] = trackBarA5.Value * maxOneArmy / 100.0;
-                client.SendInitPlacement(team, order, power, position);
+                client.SendInitPlacement(team, power, position);
                 for(int i=0;i<5;i++)
                     curSteps[i][0] = armies[i];
             }
             else
             {
-                client.SendOrder();
+                client.SendOrder(team, order, armies);
             }
         }
 

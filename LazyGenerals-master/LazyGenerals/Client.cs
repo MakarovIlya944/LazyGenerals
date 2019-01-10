@@ -26,7 +26,17 @@ namespace LazyServer
             nwStream = client.GetStream();
         }
 
-        public ValueTuple<int, int[,]> RecieveInitField()
+        public void SendHello(int team)
+        {
+            _SendData(team.ToString());
+        }
+
+        public int RecieveEnd()
+        {
+            return 0;
+        }
+
+        public ValueTuple<int, int, int, int[,]> RecieveInitField()
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
@@ -43,10 +53,10 @@ namespace LazyServer
                     F[i, j] = int.Parse(tokens[index]);
                 }
             }
-            return (maxArmy, F);
+            return (w, h, maxArmy, field);
         }
 
-        public ValueTuple<int, int[,], double[]> RecievePlacement()
+        public ValueTuple<double[], int[], int[,]> RecievePlacement()
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
@@ -68,40 +78,32 @@ namespace LazyServer
             double[] power = new double[n_power];
             for (int i = 0; i < n_power; i++)
             { power[i] = double.Parse(tokens[shift_index + i]); }
-            return (maxArmy, army, power);
+            return (power, armyNums, locations);
         }
 
-        public void SendInitPlacement(int team, int[] order, double[] power, int[,] army)
+        public void SendInitPlacement(int team, double[] power, int[,] army)
         {
-            string data = maxArmy.ToString();
-            int n = army.GetLength(0);
-            int m = army.GetLength(1);
-            data += " " + n + " " + m;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                { data += " " + army[i, j]; }
-            }
-            data += " " + power.Length;
+            string data = team.ToString();
+            int n = power.Length;
+            data += " " + n;
             for (int i = 0; i < power.Length; i++)
-            { data += " " + power[i].ToString(); }
+                data += " " + power[i].ToString(); 
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    data += " " + army[i, j];
             _SendData(data);
         }
 
-        public void SendPlacement(int maxArmy, int[,] army, double[] power)
+        public void SendOrder(int team, int[] orders, List<Point> armies)
         {
-            string data = maxArmy.ToString();
-            int n = army.GetLength(0);
-            int m = army.GetLength(1);
-            data += " " + n + " " + m;
+            string data = team.ToString();
+            int n = orders.Length;
+            data += " " + n;
             for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                { data += " " + army[i, j]; }
-            }
-            data += " " + power.Length;
-            for (int i = 0; i < power.Length; i++)
-            { data += " " + power[i].ToString(); }
+                data += " " + power[i].ToString();
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    data += " " + army[i, j];
             _SendData(data);
         }
 
@@ -118,20 +120,6 @@ namespace LazyServer
             string data = _RecieveData();
             bool isCorrect = bool.Parse(data);
             return isCorrect;
-        }
-
-        public void SendArmy(int maxArmy, int[,] army)
-        {
-            string data = maxArmy.ToString();
-            int n = army.GetLength(0);
-            int m = army.GetLength(1);
-            data += " " + n + " " + m;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                { data += " " + army[i, j]; }
-            }
-            _SendData(data);
         }
 
         private string _RecieveData()
