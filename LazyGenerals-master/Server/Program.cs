@@ -16,6 +16,8 @@ namespace LazyServer
         private TcpListener listener1, listener2;
         static private TcpClient client1, client2;
         static private NetworkStream nwStream1, nwStream2;
+        static private bool getMessage = false;
+        static string recieveData;
 
         static void Main(string[] args)
         {
@@ -185,17 +187,43 @@ namespace LazyServer
 
             nwStream2 = client2.GetStream();
         }
-       
-        static private async Task<string> _RecieveData()
+
+        static void AsyncRecieve1()
+        {
+            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
+            //---read incoming stream---
+            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
+            //---convert the data received into a string---
+            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            getMessage = true;
+        }
+
+        static void AsyncRecieve2()
+        {
+            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
+            //---read incoming stream---
+            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
+            //---convert the data received into a string---
+            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            getMessage = true;
+        }
+
+        static private async void AsyncRecieve()
         {
             byte[] buffer1 = new byte[client1.ReceiveBufferSize];
             byte[] buffer2 = new byte[client2.ReceiveBufferSize];
             //---read incoming stream---
-            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
-
+            int bytesRead = await nwStream1.ReadAsync(buffer1, 0, client1.ReceiveBufferSize);
+            bytesRead = await nwStream2.ReadAsync(buffer2, 0, client2.ReceiveBufferSize);
             //---convert the data received into a string---
-            string data = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-            return data;
+            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
+        }
+
+        static private string _RecieveData()
+        {
+            Task.Run(() => AsyncRecieve());
+            return recieveData;
         }
 
         public ValueTuple<int, int, int, int> RecieveXY()
