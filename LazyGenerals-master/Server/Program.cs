@@ -14,12 +14,13 @@ namespace LazyServer
         private readonly int portNo;
         private readonly string serverIP;
         private TcpListener listener1, listener2;
-        private TcpClient client1, client2;
-        private NetworkStream nwStream1, nwStream2;
+        static private TcpClient client1, client2;
+        static private NetworkStream nwStream1, nwStream2;
 
         static void Main(string[] args)
         {
             Server server = new Server("127.0.0.1", 5000);
+
             Logic();
         }
 
@@ -49,11 +50,12 @@ namespace LazyServer
             }
             Console.ReadLine();
         }
-
+        //========================================================================================================================
         static public void SendInfo(int endState)
         {
             string data = endState.ToString();
-            _SendData(data);
+            _SendData(data, 1);
+            _SendData(data, 2);
         }
 
         static public void SendInfo(int w, int h, int power, Battleground.types[,] field)
@@ -67,21 +69,22 @@ namespace LazyServer
                 for (int j = 0; j < m; j++)
                 { data += " " + field[i, j]; }
             }
-            _SendData(data);
+            _SendData(data, 1);
+            _SendData(data, 2);
         }
 
         static public void SendInfo(int side, double[] power, int[] numbers, int[,] location)
         {
-            string data = side.ToString();
+            string data = "";
             int n = power.Length;
-            data += " " + n;
+            data += n;
             for (int i = 0; i < n; i++)
                 data += " " + power[i];
             for (int i = 0; i < n; i++)
                 data += " " + numbers[i];
             for (int i = 0; i < n; i++)
                 data += " " + location[i, 0] + " " + location[i, 1];
-            _SendData(data);
+            _SendData(data, side);
         }
 
         static public void SendInfo(bool check, int client)
@@ -154,6 +157,7 @@ namespace LazyServer
                     army[i, j] = int.Parse(tokens[2 + i * n + j]);
             return (team, army);
         }
+        //==================================================================================================
 
         public Server(string serverIP, int portNo)
         {
@@ -181,102 +185,16 @@ namespace LazyServer
 
             nwStream2 = client2.GetStream();
         }
-
-        public void SendInitField(int maxArmy, int[,] F)
+       
+        static private async Task<string> _RecieveData()
         {
-            string data = maxArmy.ToString();
-            int n = F.GetLength(0);
-            int m = F.GetLength(1);
-            data += " " + n + " " + m;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                { data += " " + F[i, j]; }
-            }
-            _SendData(data);
-        }
-
-        public ValueTuple<int, int[,], double[]> RecievePlacement()
-        {
-            string data = _RecieveData();
-            string[] tokens = data.Split(new string[]
-                {" "}, StringSplitOptions.RemoveEmptyEntries);
-            int maxArmy = int.Parse(tokens[0]);
-            int n_army = int.Parse(tokens[1]);
-            int m_army = int.Parse(tokens[2]);
-            int[,] army = new int[n_army, m_army];
-            for (int i = 0; i < n_army; i++)
-            {
-                for (int j = 0; j < m_army; j++)
-                {
-                    int index = i * m_army + j + 3;
-                    army[i, j] = int.Parse(tokens[index]);
-                }
-            }
-            int shift_index = (n_army - 1) * m_army + n_army + 5;
-            int n_power = int.Parse(tokens[shift_index - 1]);
-            double[] power = new double[n_power];
-            for (int i = 0; i < n_power; i++)
-            { power[i] = double.Parse(tokens[shift_index + i]); }
-            return (maxArmy, army, power);
-        }
-
-        public ValueTuple<int, double[], int[,]> RecieveInitPlacement()
-        {
-            string data = _RecieveData();
-            string[] tokens = data.Split(new string[]
-                {" "}, StringSplitOptions.RemoveEmptyEntries);
-            int team = int.Parse(tokens[0]);
-            int n = int.Parse(tokens[1]);
-            int[] order = new int[n];
-            int ind = 2;
-            for (int i = 0; i < n; i++)
-            { order[i] = int.Parse(tokens[ind++]); }
-
-            n = int.Parse(tokens[ind++]);
-            double[] power = new double[n];
-            for (int i = 0; i < n; i++)
-            { power[i] = double.Parse(tokens[ind++]); }
-
-            n = int.Parse(tokens[ind++]);
-            int m = int.Parse(tokens[ind++]);
-            int[,] army = new int[n, m];
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                {
-                    int index = i * m + j + 3;
-                    army[i, j] = int.Parse(tokens[index]);
-                }
-            }
-            return (team, power, army);
-        }
-
-        public void SendPlacement(int maxArmy, int[,] army, double[] power)
-        {
-            string data = maxArmy.ToString();
-            int n = army.GetLength(0);
-            int m = army.GetLength(1);
-            data += " " + n + " " + m;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                { data += " " + army[i, j]; }
-            }
-            data += " " + power.Length;
-            for (int i = 0; i < power.Length; i++)
-            { data += " " + power[i].ToString(); }
-            _SendData(data);
-        }
-
-        private string _RecieveData()
-        {
-            byte[] buffer = new byte[client.ReceiveBufferSize];
+            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
+            byte[] buffer2 = new byte[client2.ReceiveBufferSize];
             //---read incoming stream---
-            int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
+            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
 
             //---convert the data received into a string---
-            string data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+            string data = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
             return data;
         }
 
@@ -318,7 +236,7 @@ namespace LazyServer
             _SendData(data, client);
         }
 
-        private void _SendData(string data, int client)
+        static private void _SendData(string data, int client)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(data);
             if(client == 1)

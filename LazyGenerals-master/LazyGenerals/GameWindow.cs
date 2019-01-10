@@ -157,7 +157,7 @@ namespace LazyGeneral
             }
             else
             {
-                client.SendOrder(team, order, armies);
+                client.SendOrder(team, order, curSteps);
             }
         }
 
