@@ -20,8 +20,8 @@ namespace LazyServer
 
         static void Main(string[] args)
         {
-            string Host = System.Net.Dns.GetHostName();
-            string IP = System.Net.Dns.GetHostByName(Host).AddressList[0].ToString();
+            string Host = Dns.GetHostName();
+            string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
             Server server = new Server(IP, 5000);
 
             Logic();
@@ -70,7 +70,7 @@ namespace LazyServer
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < m; j++)
-                { data += " " + field[i, j]; }
+                    data += " " + (int)field[i, j];
             }
             _SendData(data, 1);
             _SendData(data, 2);
@@ -222,7 +222,7 @@ namespace LazyServer
 
         static private string _RecieveData()
         {
-            Task.Run(() => AsyncRecieve());
+            while (recieveData == null) Task.Run(() => AsyncRecieve());
             return recieveData;
         }
 

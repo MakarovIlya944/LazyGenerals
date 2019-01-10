@@ -160,7 +160,7 @@ namespace LazyGeneral
             MovePart(0);
             commands.Reverse();
             MovePart(1);
-            commands.Reverse();
+            commands.Clear();
 
             void MovePart(int stage)
             {
