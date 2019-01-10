@@ -98,29 +98,29 @@ namespace LazyGeneral
             // возвращаю либо false, либо true true, либо true false на каждую команду
             while (c < armyCount[0] + armyCount[1])
             {
-                (armyNum, sideNum, newLoc) = GetInfo(); // получаем первую часть хода
+                (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем первую часть хода
                 switch (Check(teams[armyNum, sideNum].Location, newLoc))
                 {
                     case true:
                         //server.SendIsCorrect(true);
-                        SendInfo(true);
+                        Server.SendInfo(true, sideNum);
                         temp = newLoc; // запоминаем первую часть хода
-                        (armyNum, sideNum, newLoc) = GetInfo(); // получаем вторую часть хода
+                        (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
                         switch (Check(temp, newLoc))
                         {
                             case true:
-                                SendInfo(true);
+                                Server.SendInfo(true, sideNum);
                                 c++; // увеличиваем счетчик утвержденных ходов
                                 break;
 
                             case false:
-                                SendInfo(false);
+                                Server.SendInfo(false, sideNum);
                                 break;
                         }
                         break;
 
                     case false:
-                        SendInfo(false);
+                        Server.SendInfo(false, sideNum);
                         break;
                 }
             }
@@ -129,14 +129,14 @@ namespace LazyGeneral
             // Дважды получаю список приказов, от каждого клиента по одному
             for (int k = 0; k < 2; k++)
             {
-                (sideNum, armys) = GetInfo();
+                (sideNum, armys) = Server.GetInfoOrders();
                 for (int i = 0; i < armyCount[sideNum] * 2; i += 2)
                     AddArmy(sideNum, armys[i, 0], armys[i, 1], armys[i, 2], armys[i + 1, 1], armys[i + 1, 2]);
             }
 
             bool Check(int[] curLoc, int[] nextLoc) // Проверяю, движется ли армия только на одну клетку и что эта клетка не вода
             {
-                if (curLoc[0] + curLoc[1] + (nextLoc[0] + nextLoc[1]) == 1 && points[nextLoc[0], nextLoc[1]] == 1)
+                if (Math.Abs(curLoc[0] + curLoc[1] - (nextLoc[0] + nextLoc[1])) == 1 && points[nextLoc[0], nextLoc[1]] == 1)
                     return true; // можно
                 return false; // нельзя
             }
