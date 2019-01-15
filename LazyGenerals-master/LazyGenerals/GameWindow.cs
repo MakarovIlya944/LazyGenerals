@@ -192,7 +192,7 @@ namespace LazyGeneral
                 power[4] = trackBarA5.Value * maxOneArmy / 100.0;
                 client.SendInitPlacement(team, power, position);
                 for(int i=0;i<5;i++)
-                    curSteps[i][0] = armies[i];
+                    curSteps[0][i] = armies[i];
             }
             else
             {
