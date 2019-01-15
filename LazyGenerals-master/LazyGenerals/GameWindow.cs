@@ -61,6 +61,11 @@ namespace LazyGeneral
             maxOneArmy = max * 0.75;
             labelAmaxnum.Text = maxAllArmy.ToString();
             labelAmaxonenum.Text = maxOneArmy.ToString();
+            labelA1num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA2num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA3num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA4num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA5num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
             gamedrive.Init(pictureBox1.Width, pictureBox1.Height, w, h, F);
             Text = team == 1 ? "Хост" : "Клиент";
         }
@@ -68,14 +73,13 @@ namespace LazyGeneral
         private void pictureBox1_Paint(object sender, PaintEventArgs pe)
 		{
 			gamedrive.g = pe.Graphics;
-			gamedrive.PaintBattleField();
-            //pe.Graphics.DrawRectangle(new Pen(Color.Gold, 4), 22, 22, 30, 26); 
+            gamedrive.PaintBattleField();
             int[] rect = new int[4];
             if (isInitPhase)
                 for (int i = 0, n = armies.Count; i < n; i++)
                 {
                     rect = gamedrive.DrawArmy(armies[i].X, armies[i].Y);
-                    pe.Graphics.DrawRectangle(new Pen(armyColorDefault,4), rect[0], rect[1], rect[2], rect[3]);
+                    pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
                 }
             else
             {
@@ -134,6 +138,7 @@ namespace LazyGeneral
                         }
                     }
                 }
+            pictureBox1.Invalidate();
         }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -206,11 +211,6 @@ namespace LazyGeneral
                 MessageBox.Show("Слишком большие армии!");
                 return;
             }
-            //включить другой режим
-            pictureBox1.Visible = true;
-            pictureBox1.Enabled = true;
-            gameInitGroup.Enabled = false;
-            gameInitGroup.Visible = false;
 
             int _h = team == 1 ? 0 : h - 1;
             armies.Add(new Point(0, _h));
@@ -218,6 +218,12 @@ namespace LazyGeneral
             armies.Add(new Point(2, _h));
             armies.Add(new Point(3, _h));
             armies.Add(new Point(4, _h));
+
+            //включить другой режим
+            pictureBox1.Visible = true;
+            pictureBox1.Enabled = true;
+            gameInitGroup.Enabled = false;
+            gameInitGroup.Visible = false;
 
             buttonAction.Visible = true;
             buttonAction.Enabled = true;

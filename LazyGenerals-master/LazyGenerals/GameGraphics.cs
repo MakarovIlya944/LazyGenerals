@@ -76,7 +76,7 @@ namespace LazyGeneral
 				_y < heightWindow - netBorder)
 			{
 				CellLighting(new Point((_x - netBorder) / dx + 1, (_y - netBorder) / dy + 1));
-				return new Point((_x - netBorder) / dx + 1, (_y - netBorder) / dy + 1);
+				return new Point((_x - netBorder) / dx, (_y - netBorder) / dy);
 			}
 			else
 				return new Point(-1, -1);
