@@ -37,22 +37,46 @@ namespace LazyGeneral
 			InitializeComponent();
             this.client = client;
             isEnd = false;
-            client.SendHello(team);
+            //client.SendHello(team);
             int[,] F;
             int max;
+#if DEBUG
+            w = 10;
+            h = 10;
+            max = 15000;
+            F = new int[10, 10] { { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1},
+            { 1,1,1,1,1,1,1,1,1,1}};
+#else
             (w,h,max,F) = client.RecieveInitField();
+#endif
             maxAllArmy = max;
             maxOneArmy = max * 0.75;
+            labelAmaxnum.Text = maxAllArmy.ToString();
+            labelAmaxonenum.Text = maxOneArmy.ToString();
             gamedrive.Init(pictureBox1.Width, pictureBox1.Height, w, h, F);
+            Text = team == 1 ? "Хост" : "Клиент";
         }
 
-        private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
+        private void pictureBox1_Paint(object sender, PaintEventArgs pe)
 		{
 			gamedrive.g = pe.Graphics;
 			gamedrive.PaintBattleField();
+            //pe.Graphics.DrawRectangle(new Pen(Color.Gold, 4), 22, 22, 30, 26); 
+            int[] rect = new int[4];
             if (isInitPhase)
                 for (int i = 0, n = armies.Count; i < n; i++)
-                    gamedrive.DrawArmy(armyColorDefault, armies[i].X, armies[i].Y);
+                {
+                    rect = gamedrive.DrawArmy(armies[i].X, armies[i].Y);
+                    pe.Graphics.DrawRectangle(new Pen(armyColorDefault,4), rect[0], rect[1], rect[2], rect[3]);
+                }
             else
             {
                 for (int i = 0, n = curSteps.GetLength(0); i < n; i++)
@@ -121,50 +145,30 @@ namespace LazyGeneral
         {
             labelA1num.Text = Math.Round((trackBarA1.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value)* maxOneArmy/100.0).ToString();
-            trackBarA2.Maximum -= trackBarA1.Value;
-            trackBarA3.Maximum -= trackBarA1.Value;
-            trackBarA4.Maximum -= trackBarA1.Value;
-            trackBarA5.Maximum -= trackBarA1.Value;
         }
 
         private void trackBarA2_Scroll(object sender, EventArgs e)
         {
             labelA2num.Text = Math.Round((trackBarA2.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
-            trackBarA1.Maximum -= trackBarA2.Value;
-            trackBarA3.Maximum -= trackBarA2.Value;
-            trackBarA4.Maximum -= trackBarA2.Value;
-            trackBarA5.Maximum -= trackBarA2.Value;
         }
 
         private void trackBarA3_Scroll(object sender, EventArgs e)
         {
             labelA3num.Text = Math.Round((trackBarA3.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
-            trackBarA1.Maximum -= trackBarA3.Value;
-            trackBarA2.Maximum -= trackBarA3.Value;
-            trackBarA4.Maximum -= trackBarA3.Value;
-            trackBarA5.Maximum -= trackBarA3.Value;
         }
 
         private void trackBarA4_Scroll(object sender, EventArgs e)
         {
             labelA4num.Text = Math.Round((trackBarA4.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
-            trackBarA1.Maximum -= trackBarA4.Value;
-            trackBarA2.Maximum -= trackBarA4.Value;
-            trackBarA3.Maximum -= trackBarA4.Value;
-            trackBarA5.Maximum -= trackBarA4.Value;
         }
 
         private void trackBarA5_Scroll(object sender, EventArgs e)
         {
             labelA5num.Text = Math.Round((trackBarA5.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
-            trackBarA1.Maximum -= trackBarA5.Value;
-            trackBarA2.Maximum -= trackBarA5.Value;
-            trackBarA3.Maximum -= trackBarA5.Value;
-            trackBarA4.Maximum -= trackBarA5.Value;
         }
      
         private void buttonAction_Click(object sender, EventArgs e)
@@ -209,11 +213,11 @@ namespace LazyGeneral
             gameInitGroup.Visible = false;
 
             int _h = team == 1 ? 0 : h - 1;
+            armies.Add(new Point(0, _h));
             armies.Add(new Point(1, _h));
             armies.Add(new Point(2, _h));
             armies.Add(new Point(3, _h));
             armies.Add(new Point(4, _h));
-            armies.Add(new Point(5, _h));
 
             buttonAction.Visible = true;
             buttonAction.Enabled = true;

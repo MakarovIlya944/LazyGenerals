@@ -222,7 +222,23 @@ namespace LazyServer
 
         static private string _RecieveData()
         {
-            while (recieveData == null) Task.Run(() => AsyncRecieve());
+            //while (recieveData == null) Task.Run(() => AsyncRecieve());
+            int team = -1;
+            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
+            byte[] buffer2 = new byte[client2.ReceiveBufferSize];
+            //---read incoming stream---
+            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
+            bytesRead = nwStream2.Read(buffer2, 0, client2.ReceiveBufferSize);
+            recieveData = "";
+            //---convert the data received into a string---
+            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            team = 1;
+            if (recieveData == "")
+            {
+                recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
+                team = 2;
+            }
+            Console.WriteLine($"Client #{team} send: {recieveData}");
             return recieveData;
         }
 
@@ -266,6 +282,7 @@ namespace LazyServer
 
         static private void _SendData(string data, int client)
         {
+            Console.WriteLine($"Server send {data} to client #{client}");
             byte[] buffer = Encoding.ASCII.GetBytes(data);
             if(client == 1)
                 nwStream1.Write(buffer, 0, buffer.Length);

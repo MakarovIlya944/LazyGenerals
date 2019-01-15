@@ -22,8 +22,11 @@ namespace LazyServer
             this.serverIP = serverIP;
 
             //---create a TCPClient object at the IP and port no.---
+#if DEBUG
+#else
             client = new TcpClient(serverIP, portNo);
             nwStream = client.GetStream();
+#endif
         }
 
         public void SendHello(int team)

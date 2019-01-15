@@ -94,8 +94,20 @@ namespace LazyGeneral
 			int _dy = dy - cellBorder * 2 - armyReduce * 2;
             
 			g.DrawRectangle(new Pen(c,4), _x, _y, _dx, _dy);
-
-			return true;
+            return true;
 		}
-	}
+
+        public int[] DrawArmy(int x, int y)
+        {
+            if (x < 0 || x > width || y < 0 || y > height)
+                return null;
+
+            int armyReduce = 5;
+            int _x = cellBorder + netBorder + dx * x + armyReduce;
+            int _y = cellBorder + netBorder + dy * y + armyReduce;
+            int _dx = dx - cellBorder * 2 - armyReduce * 2;
+            int _dy = dy - cellBorder * 2 - armyReduce * 2;
+            return new int[4] { _x, _y, _dx, _dy };
+        }
+    }
 }
