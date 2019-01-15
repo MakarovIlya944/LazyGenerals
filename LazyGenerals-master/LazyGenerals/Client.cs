@@ -85,10 +85,9 @@ namespace LazyServer
             int n = power.Length;
             data += " " + n;
             for (int i = 0; i < power.Length; i++)
-                data += " " + power[i]; 
+                data += " " + power[i];
             for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                    data += " " + army[i, j];
+                data += $" {army[i, 0]} {army[i, 1]}";
             _SendData(data);
         }
 
