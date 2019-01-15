@@ -21,7 +21,7 @@ namespace LazyGeneral
             Server.SendInfo(field.SizeX, field.SizeY, 15000, field.tile);
 
             // Обрати внимание!
-            Army[,] A = new Army[2, 2];
+            Army[,] A = new Army[5, 2];
             int side = new int();
             double[] powerInfo;
             int[,] locationInfo;
