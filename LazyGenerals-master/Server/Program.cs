@@ -103,7 +103,7 @@ namespace LazyServer
         static public void SendInfo(bool check, int client)
         {
             string data = check.ToString();
-            _SendData(data, client);
+            _SendData(data, client + 1);
         }
 
         static public ValueTuple<int, double[], int[,]> GetInfoStart()
@@ -141,7 +141,7 @@ namespace LazyServer
             string[] tokens = data.Split(new string[]
                 {" "}, StringSplitOptions.RemoveEmptyEntries);
             int army = int.Parse(tokens[0]);
-            int team = int.Parse(tokens[1]);
+            int team = int.Parse(tokens[1]) - 1;
             int[] location = new int[2];
             location[0] = int.Parse(tokens[2]);
             location[1] = int.Parse(tokens[3]);

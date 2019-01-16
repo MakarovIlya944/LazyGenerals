@@ -93,36 +93,58 @@ namespace LazyGeneral
             int sideNum;
             int[] newLoc;
             int[] temp;
-            int c = 0; // количество утвержденных движений
+            bool quit = false; // количество утвержденных движений
             // отправка двумя партиями, но подряд (для удобства обработки сообщений от двух клиентов
             // возвращаю либо false, либо true true, либо true false на каждую команду
-            while (c < armyCount[0] + armyCount[1])
+            while (!quit)
             {
                 (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем первую часть хода
-                switch (Check(teams[armyNum, sideNum].Location, newLoc))
-                {
-                    case true:
-                        //server.SendIsCorrect(true);
-                        Server.SendInfo(true, sideNum);
-                        temp = newLoc; // запоминаем первую часть хода
-                        (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
-                        switch (Check(temp, newLoc))
-                        {
-                            case true:
-                                Server.SendInfo(true, sideNum);
-                                c++; // увеличиваем счетчик утвержденных ходов
-                                break;
+                    switch (armyNum)
+                    {
+                        case -1:
+                            quit = true;
+                            break;
 
-                            case false:
-                                Server.SendInfo(false, sideNum);
-                                break;
-                        }
-                        break;
+                        case -2:
+                            break;
 
-                    case false:
-                        Server.SendInfo(false, sideNum);
-                        break;
-                }
+                        default:
+                            switch (Check(teams[armyNum, sideNum].Location, newLoc))
+                            {
+                                case true:
+                                    //server.SendIsCorrect(true);
+                                    Server.SendInfo(true, sideNum);
+                                    temp = newLoc; // запоминаем первую часть хода
+                                    (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
+                                    switch (armyNum)
+                                    {
+                                        case -1:
+                                        quit = true;
+                                        break;
+
+                                        case -2:
+                                            break;
+
+                                        default:
+                                            switch (Check(temp, newLoc))
+                                            {
+                                                case true:
+                                                    Server.SendInfo(true, sideNum);
+                                                    break;
+
+                                                case false:
+                                                    Server.SendInfo(false, sideNum);
+                                                    break;
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case false:
+                                    Server.SendInfo(false, sideNum);
+                                    break;
+                            }
+                            break;
+                    }  
             }
 
             int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2
