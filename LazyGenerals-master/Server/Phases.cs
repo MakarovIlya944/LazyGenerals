@@ -103,10 +103,12 @@ namespace LazyGeneral
                     {
                         case -1:
                             quit = true;
-                            break;
+                        Server.SendInfo(true, sideNum);
+                        break;
 
                         case -2:
-                            break;
+                        Server.SendInfo(true, sideNum);
+                        break;
 
                         default:
                             switch (Check(teams[armyNum, sideNum].Location, newLoc))
@@ -119,11 +121,13 @@ namespace LazyGeneral
                                     switch (armyNum)
                                     {
                                         case -1:
+                                        Server.SendInfo(true, sideNum);
                                         quit = true;
                                         break;
 
                                         case -2:
-                                            break;
+                                        Server.SendInfo(true, sideNum);
+                                        break;
 
                                         default:
                                             switch (Check(temp, newLoc))
