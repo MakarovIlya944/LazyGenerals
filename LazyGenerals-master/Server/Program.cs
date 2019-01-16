@@ -103,26 +103,17 @@ namespace LazyServer
                 {" "}, StringSplitOptions.RemoveEmptyEntries);
             int team = int.Parse(tokens[0]);
             int n = int.Parse(tokens[1]);
-            int[] order = new int[n];
             int ind = 2;
-            for (int i = 0; i < n; i++)
-            { order[i] = int.Parse(tokens[ind++]); }
 
-            n = int.Parse(tokens[ind++]);
             double[] power = new double[n];
             for (int i = 0; i < n; i++)
             { power[i] = double.Parse(tokens[ind++]); }
 
-            n = int.Parse(tokens[ind++]);
-            int m = int.Parse(tokens[ind++]);
-            int[,] army = new int[n, m];
+            int[,] army = new int[n, 2];
             for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < m; j++)
-                {
-                    int index = i * m + j + 3;
-                    army[i, j] = int.Parse(tokens[index]);
-                }
+                army[i, 0] = int.Parse(tokens[ind++]);
+                army[i, 1] = int.Parse(tokens[ind++]);
             }
             return (team, power, army);
         }
