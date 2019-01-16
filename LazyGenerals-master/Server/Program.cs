@@ -76,18 +76,23 @@ namespace LazyServer
             _SendData(data, 2);
         }
 
-        static public void SendInfo(int side, double[] power, int[] numbers, int[,] location)
+        static public void SendInfo(double[,] power, int[,] numbers, int[,,] location)
         {
             string data = "";
-            int n = power.Length;
-            data += n;
-            for (int i = 0; i < n; i++)
-                data += " " + power[i];
-            for (int i = 0; i < n; i++)
-                data += " " + numbers[i];
-            for (int i = 0; i < n; i++)
-                data += " " + location[i, 0] + " " + location[i, 1];
-            _SendData(data, side);
+            int n;
+            for (int side = 0; side < 2; side++)
+            {
+                n = power.GetLength(0);
+                data += n;
+                for (int i = 0; i < n; i++)
+                    data += " " + power[i, side];
+                for (int i = 0; i < n; i++)
+                    data += " " + numbers[i, side];
+                for (int i = 0; i < n; i++)
+                    data += " " + location[i, 0, side] + " " + location[i, 1, side];
+            }
+            _SendData(data, 1);
+            _SendData(data, 2);
         }
 
         static public void SendInfo(bool check, int client)
