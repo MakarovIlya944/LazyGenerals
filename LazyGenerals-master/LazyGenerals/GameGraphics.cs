@@ -164,8 +164,8 @@ namespace LazyGeneral
             }
             else
             {
-                _x = cellBorder + netBorder + dx * width + armyReduce;
-                _y = cellBorder + netBorder + dy * height + armyReduce;
+                _x = cellBorder + netBorder + dx * (width-1) + armyReduce;
+                _y = cellBorder + netBorder + dy * (height-1) + armyReduce;
                 g.DrawImage(images[1], _x, _y, _dx, _dy);
             }
         }

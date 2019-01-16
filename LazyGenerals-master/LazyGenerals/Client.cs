@@ -122,7 +122,7 @@ namespace LazyServer
 
         public bool SendXY(int team, int id, int x, int y)
         {
-            string data = team.ToString() +
+            string data = team +
                 " " + id + " " + x + " " + y;
             _SendData(data);
             return RecieveIsCorrect();

@@ -85,9 +85,12 @@ namespace LazyGeneral
 
         private void pictureBox1_Paint(object sender, PaintEventArgs pe)
 		{
+            int enemyteam = team == 1 ? 2 : 1;
             gamedrive.g = pe.Graphics;
             gamedrive.PaintBattleField();
             //int[] rect = new int[4];
+            gamedrive.DrawBase(team);
+            gamedrive.DrawBase(enemyteam);
             if (isInitPhase)
             {
                 for (int i = 0; i < armyCount; i++)
@@ -119,7 +122,7 @@ namespace LazyGeneral
                             gamedrive.DrawArmy(team, curSteps[2][i].X, curSteps[2][i].Y, i + 1, powers[i], (float)0.5);
                         }
                     }
-                    int enemyteam = team == 1 ? 2 : 1;
+                    
                     if(enemyPowers[i] > 0)
                         gamedrive.DrawArmy(enemyteam, enemyArmies[i].X, enemyArmies[i].Y, i + 1, enemyPowers[i], 1);
                 }
@@ -138,14 +141,28 @@ namespace LazyGeneral
                         bool exists = armies.Any(x => x == pos);
                         if (activeArmyNum != -1 && !exists && (team == 1 ? pos.Y : h - 1 - pos.Y) < limitArea)
                         {
-                            armies[activeArmyNum] = pos;
-                            activeArmyNum = -1;
+                            if (team == 1)
+                            {
+                                if (pos != new Point(0, 0))
+                                {
+                                    armies[activeArmyNum] = pos;
+                                    activeArmyNum = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (pos != new Point(h - 1, h - 1))
+                                {
+                                    armies[activeArmyNum] = pos;
+                                    activeArmyNum = -1;
+                                }
+                            }
+
                         }
                         else if (activeArmyNum == -1 && exists)
                         {
                             activeArmyNum = 0;
                             for (; activeArmyNum < armyCount && armies[activeArmyNum] != pos; activeArmyNum++) ;
-                            //activeArmyNum = armies.FindIndex(x => x == pos);
                         }
                     }
                     else
@@ -187,7 +204,7 @@ namespace LazyGeneral
             {
                 activeArmyNum = -1;
                 activeLayer = -1;
-                client.SendXY(-2, -2, -2, -2);
+                client.SendXY(-2, team, -2, -2);
             }
             pictureBox1.Invalidate();
         }
@@ -291,11 +308,11 @@ namespace LazyGeneral
             powers[4] = trackBarA5.Value * maxOneArmy / 100.0;
 
             int _h = team == 1 ? 0 : h - 1;
-            armies[0] = new Point(0, _h);
-            armies[1] = new Point(1, _h);
-            armies[2] = new Point(2, _h);
-            armies[3] = new Point(3, _h);
-            armies[4] = new Point(4, _h);
+            armies[0] = new Point(1, _h);
+            armies[1] = new Point(2, _h);
+            armies[2] = new Point(3, _h);
+            armies[3] = new Point(4, _h);
+            armies[4] = new Point(5, _h);
 
             //включить другой режим
             pictureBox1.Visible = true;
