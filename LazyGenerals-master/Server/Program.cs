@@ -94,6 +94,7 @@ namespace LazyServer
                     data += " " + numbers[i, side];
                 for (int i = 0; i < n; i++)
                     data += " " + location[i, 0, side] + " " + location[i, 1, side];
+                data += " ";
             }
             _SendData(data, 1);
             _SendData(data, 2);

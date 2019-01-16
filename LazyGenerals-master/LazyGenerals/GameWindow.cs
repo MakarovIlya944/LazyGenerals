@@ -15,6 +15,7 @@ namespace LazyGeneral
 	{
 		private GameGraphics gamedrive = new GameGraphics();
         private Color armyColorDefault, armyColorSelected, armyColorStep;
+        private Color enemyArmyColorDefault, enemyArmyColorSelected, enemyArmyColorStep;
         private double maxOneArmy = 50.0, maxAllArmy = 100.0;
         private int w, h;
         private Client client;
@@ -22,7 +23,7 @@ namespace LazyGeneral
         private int team;
         private double[] powers, enemyPowers;
         private Point[] armies, enemyArmies;
-        private int[] order = new int[armyCount];
+        private int[] order;
         private int activeArmyNum = -1;
         private int activeLayer = -1;
         private int approvedOrders = 0;
@@ -36,12 +37,16 @@ namespace LazyGeneral
             armyColorDefault = t == 1 ? Color.DarkRed : Color.ForestGreen;
             armyColorSelected = t == 1 ? Color.Crimson : Color.LimeGreen;
             armyColorStep = t == 1 ? Color.Firebrick : Color.Green;
+            enemyArmyColorDefault = t != 1 ? Color.DarkRed : Color.ForestGreen;
+            enemyArmyColorSelected = t != 1 ? Color.Crimson : Color.LimeGreen;
+            enemyArmyColorStep = t != 1 ? Color.Firebrick : Color.Green;
             for (int i = 0; i < 3; i++)
             {
                 curSteps[i] = new Point[armyCount];
                 for (int j = 0; j < armyCount; j++)
                     curSteps[i][j] = new Point(-1, -1);
             }
+            order = new int[armyCount];
             powers = new double[armyCount];
             enemyPowers = new double[armyCount];
             armies = new Point[armyCount];
@@ -113,6 +118,8 @@ namespace LazyGeneral
                             gamedrive.DrawArmy(i != activeArmyNum ? armyColorSelected : armyColorStep, curSteps[2][i].X, curSteps[2][i].Y, i + 1, powers[i]);
                         }
                     }
+                    if(enemyPowers[i] > 0)
+                        gamedrive.DrawArmy(enemyArmyColorDefault, enemyArmies[i].X, enemyArmies[i].Y, i + 1, enemyPowers[i]);
                 }
             }
 		}
@@ -154,8 +161,7 @@ namespace LazyGeneral
                     }
                     else if (activeArmyNum != -1 && layer == -1 && activeLayer < 2)
                     {
-                        client.SendXY(team, activeArmyNum, pos.X, pos.Y);
-                        if (client.RecieveIsCorrect() && !curSteps[activeLayer].Any(x => x == pos))
+                        if (client.SendXY(activeArmyNum, team, pos.X, pos.Y) && !curSteps[activeLayer].Any(x => x == pos))
                         {
                             if (activeLayer == 0 && !order.Any(x => x == activeArmyNum))
                             {
@@ -209,20 +215,21 @@ namespace LazyGeneral
             labelA5num.Text = Math.Round((trackBarA5.Value * maxOneArmy) / 100.0).ToString();
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
         }
-     
+
         private void buttonAction_Click(object sender, EventArgs e)
         {
+            int[,] position = new int[armyCount, 2];
+            int[,] enemyPosition = new int[armyCount, 2];
             if (isInitPhase)
             {
                 isInitPhase = false;
-                int[,] position = new int[armyCount, 2];
                 for (int i = 0; i < armyCount; i++)
                 {
                     position[i, 0] = armies[i].X;
                     position[i, 1] = armies[i].Y;
                 }
                 client.SendInitPlacement(team, powers, position);
-                for(int i=0;i<armyCount;i++)
+                for (int i = 0; i < armyCount; i++)
                     curSteps[0][i] = armies[i];
                 labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
             }
@@ -240,19 +247,19 @@ namespace LazyGeneral
                         curSteps[2][i] = curSteps[1][i];
                 }
                 client.SendOrder(team, order, curSteps);
-                if (team == 1)
-                {
-                    () = client.RecievePlacement();
-                }
-                for(int i = 0;i<5;i++)
-                {
-                    curSteps[0][i] = curSteps[2][i];
-                    curSteps[1][i].X = -1;
-                    //curSteps[1][i].Y = -1;
-                    curSteps[2][i].X = -1;
-                    //curSteps[2][i].Y = -1;
-                }
             }
+
+            (powers, order, position, enemyPowers, order, enemyPosition) = client.RecievePlacement(team);
+            for (int i = 0; i < armyCount; i++)
+            {
+                armies[i].X = position[i, 0];
+                armies[i].Y = position[i, 1];
+                enemyArmies[i].X = enemyPosition[i, 0];
+                enemyArmies[i].Y = enemyPosition[i, 1];
+                curSteps[0][i] = armies[i];
+                order[i] = -1;
+            }
+
             pictureBox1.Invalidate();
         }
 

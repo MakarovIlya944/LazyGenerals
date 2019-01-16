@@ -57,7 +57,7 @@ namespace LazyServer
             return (n, m, maxArmy, F);
         }
 
-        public ValueTuple<double[], int[], int[,]> RecievePlacement()
+        public ValueTuple<double[], int[], int[,], double[], int[], int[,]> RecievePlacement(int team)
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
@@ -66,6 +66,9 @@ namespace LazyServer
             double[] power = new double[n];
             int[,] locations = new int[n, 2];
             int[] armyNums = new int[n];
+            double[] enemypower = new double[n];
+            int[,] enemylocations = new int[n, 2];
+            int[] enemyarmyNums = new int[n];
             int ind = 1;
             for (int i = 0; i < n; i++)
                 power[i] = double.Parse(tokens[ind++]);
@@ -76,7 +79,20 @@ namespace LazyServer
                 locations[i, 0] = int.Parse(tokens[ind++]);
                 locations[i, 1] = int.Parse(tokens[ind++]);
             }
-            return (power, armyNums, locations);
+            n = int.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+                enemypower[i] = double.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+                enemyarmyNums[i] = int.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+            {
+                enemylocations[i, 0] = int.Parse(tokens[ind++]);
+                enemylocations[i, 1] = int.Parse(tokens[ind++]);
+            }
+            if(team == 1)
+                return (power, armyNums, locations, enemypower, enemyarmyNums, enemylocations);
+            else
+                return (enemypower, enemyarmyNums, enemylocations, power, armyNums, locations);
         }
 
         public void SendInitPlacement(int team, double[] power, int[,] army)
