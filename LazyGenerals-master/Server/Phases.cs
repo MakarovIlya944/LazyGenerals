@@ -64,26 +64,26 @@ namespace LazyGeneral
         public void Scouting()
         {
 
-            double[] powerInfo = new double[maxArmy];
-            int[] numberInfo = new int[maxArmy];
-            int[,] locationInfo = new int[maxArmy, 2];
+            double[,] powerInfo = new double[maxArmy, 2];
+            int[,] numberInfo = new int[maxArmy, 2];
+            int[,,] locationInfo = new int[maxArmy, 2, 2];
 
             // Обрати внимание!
-            Sending(0);
-            Sending(1);
+            Sending();
 
-            void Sending(int side)
+            void Sending()
             {
                 for (int i = 0; i < maxArmy; i++)
-                {
-                    powerInfo[i] = teams[i, side].Power;
-                    numberInfo[i] = teams[i, side].Number;
-                    for (int j = 0; j < 2; j++)
-                        locationInfo[i, j] = teams[i, side].Location[j];
-                }
+                    for (int side = 0; side < 2; side++)
+                    {
+                        powerInfo[i, side] = teams[i, side].Power;
+                        numberInfo[i, side] = teams[i, side].Number;
+                        for (int j = 0; j < 2; j++)
+                            locationInfo[i, j, side] = teams[i, side].Location[j];
+                    }
 
                 //server.SendXY(side, powerInfo, numberInfo, locationInfo);
-                Server.SendInfo(side, powerInfo, numberInfo, locationInfo);
+                Server.SendInfo(powerInfo, numberInfo, locationInfo);
             }
         }
 
