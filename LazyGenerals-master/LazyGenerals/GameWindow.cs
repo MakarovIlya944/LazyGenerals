@@ -47,23 +47,23 @@ namespace LazyGeneral
 			InitializeComponent();
             this.client = client;
             isEnd = false;
-            //client.SendHello(team);
+            client.SendHello(team);
             int[,] F;
             int max;
-            w = 10;
-            h = 10;
-            max = 15000;
-            F = new int[10, 10] { { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1},
-            { 1,1,1,1,1,1,1,1,1,1}};
-            //(w,h,max,F) = client.RecieveInitField();
+            //w = 10;
+            //h = 10;
+            //max = 15000;
+            //F = new int[10, 10] { { 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1}};
+            (w,h,max,F) = client.RecieveInitField();
             maxAllArmy = max;
             maxOneArmy = max * 0.75;
             labelAmaxnum.Text = maxAllArmy.ToString();
@@ -116,11 +116,6 @@ namespace LazyGeneral
             }
 		}
 
-        private bool tmpCheck(int num, int x, int y)
-        {
-            return true;
-        }
-
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
             Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
@@ -153,9 +148,9 @@ namespace LazyGeneral
                     }
                     else if (activeArmyNum != -1 && layer == -1 && activeLayer < 2)
                     {
-                        //client.SendXY(team, activeArmyNum, pos.X, pos.Y);
-                        bool b = tmpCheck(activeArmyNum, pos.X, pos.Y);
-                        if (b && !curSteps[activeLayer].Any(x => x == pos))//client.RecieveIsCorrect())
+                        client.SendXY(team, activeArmyNum, pos.X, pos.Y);
+                        //bool b = tmpCheck(activeArmyNum, pos.X, pos.Y);
+                        if (client.RecieveIsCorrect() && !curSteps[activeLayer].Any(x => x == pos))
                         {
                             if (activeLayer == 0 && !order.Any(x => x == activeArmyNum))
                             {
@@ -221,7 +216,7 @@ namespace LazyGeneral
                     position[i, 0] = armies[i].X;
                     position[i, 1] = armies[i].Y;
                 }
-                //client.SendInitPlacement(team, power, position);
+                client.SendInitPlacement(team, armyPower, position);
                 for(int i=0;i<armyCount;i++)
                     curSteps[0][i] = armies[i];
                 labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
@@ -239,7 +234,7 @@ namespace LazyGeneral
                     if (curSteps[2][i].X == -1)
                         curSteps[2][i] = curSteps[1][i];
                 }
-                //client.SendOrder(team, order, curSteps);
+                client.SendOrder(team, order, curSteps);
                 for(int i = 0;i<5;i++)
                 {
                     curSteps[0][i] = curSteps[2][i];
