@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace LazyGeneral
 {
@@ -24,6 +25,8 @@ namespace LazyGeneral
 		private Point cellLightning;
         //выделение ограничение расстановки
         private Pen conditionPen;
+        //спрайты
+        private Image[] images;
 		public Graphics g { set; get; }
 		
 
@@ -50,12 +53,21 @@ namespace LazyGeneral
 
             conditionPen = new Pen(Color.Yellow, 4);
             conditionPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+
+            images = new Image[6];
+            images[0] = Image.FromFile("1.png");
+            images[1] = Image.FromFile("2.png");
+            images[2] = Image.FromFile("3.png");
+            images[3] = Image.FromFile("4.png");
+            images[4] = Image.FromFile("5.png");
+            images[5] = Image.FromFile("6.png");
+            
+
             return true;
 		}
 
 		public bool PaintBattleField()
 		{
-			
 			g.FillRectangle(Brushes.Black, netBorder, netBorder, widthWindow - netBorder * 2, heightWindow - netBorder * 2);
 
 			for (int x = netBorder, ix = 0; ix < width; x += dx, ix++)
@@ -104,6 +116,41 @@ namespace LazyGeneral
             return true;
 		}
 
+        public bool DrawArmy(int team, int x, int y, int num, double power)
+        {
+            if (x < 0 || x > width || y < 0 || y > height)
+                return false;
+            int armyReduce = 5;
+            int _x = cellBorder + netBorder + dx * x + armyReduce;
+            int _y = cellBorder + netBorder + dy * y + armyReduce;
+            int _dx = dx - cellBorder * 2 - armyReduce * 2;
+            int _dy = dy - cellBorder * 2 - armyReduce * 2;
+            if (team == 1)
+                g.DrawImage(images[2], _x, _y, _dx, _dy);
+            else
+                g.DrawImage(images[3], _x, _y, _dx, _dy);
+
+            return true;
+        }
+
+        public void DrawBase(int team)
+        {
+            int armyReduce = 5;
+            int _x, _y;
+            if (team == 1)
+            {
+                _x = cellBorder + netBorder + dx * x + armyReduce;
+                _y = cellBorder + netBorder + dy * y + armyReduce;
+            }
+            else
+            {
+                _x = cellBorder + netBorder + dx * x + armyReduce;
+                _y = cellBorder + netBorder + dy * y + armyReduce;
+            }
+            int _dx = dx - cellBorder * 2 - armyReduce * 2;
+            int _dy = dy - cellBorder * 2 - armyReduce * 2;
+        }
+
         public void DrawPath(Color c, Point b, Point e)
         {
             int armyReduce = 5;
@@ -115,25 +162,26 @@ namespace LazyGeneral
             g.DrawLine(new Pen(c, 3), b, e);
         }
 
-        public void DrawConditionLine(int row)
+        private Image SetImgOpacity(Image imgPic, float imgOpac)
+        {
+            Bitmap bmpPic = new Bitmap(imgPic.Width, imgPic.Height);
+            Graphics gfxPic = Graphics.FromImage(bmpPic);
+            ColorMatrix cmxPic = new ColorMatrix();
+            cmxPic.Matrix33 = imgOpac;
+            ImageAttributes iaPic = new ImageAttributes();
+            iaPic.SetColorMatrix(cmxPic, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            gfxPic.DrawImage(imgPic, new Rectangle(0, 0, bmpPic.Width, bmpPic.Height), 0, 0, imgPic.Width, imgPic.Height, GraphicsUnit.Pixel, iaPic);
+            gfxPic.Dispose();
+            return bmpPic;
+        }
+
+
+    public void DrawConditionLine(int row)
         {
             int _x = cellBorder + netBorder;
             int _y = cellBorder + netBorder + dy * row;
             int _dx = cellBorder + netBorder + dx * width;
             g.DrawLine(conditionPen, new Point(_x, _y), new Point(_dx, _y));
-        }
-
-        public int[] DrawArmy(int x, int y)
-        {
-            if (x < 0 || x > width || y < 0 || y > height)
-                return null;
-
-            int armyReduce = 5;
-            int _x = cellBorder + netBorder + dx * x + armyReduce;
-            int _y = cellBorder + netBorder + dy * y + armyReduce;
-            int _dx = dx - cellBorder * 2 - armyReduce * 2;
-            int _dy = dy - cellBorder * 2 - armyReduce * 2;
-            return new int[4] { _x, _y, _dx, _dy };
         }
     }
 }

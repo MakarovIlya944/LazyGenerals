@@ -85,7 +85,7 @@ namespace LazyGeneral
 
         private void pictureBox1_Paint(object sender, PaintEventArgs pe)
 		{
-			gamedrive.g = pe.Graphics;
+            gamedrive.g = pe.Graphics;
             gamedrive.PaintBattleField();
             //int[] rect = new int[4];
             if (isInitPhase)
@@ -96,7 +96,8 @@ namespace LazyGeneral
                         //rect = gamedrive.DrawArmy(armies[i].X, armies[i].Y);
                         //pe.Graphics.DrawString(i.ToString(), new Font("Microsoft Sans Serif", 13), Brushes.Black, new Point(rect[0] + rect[2] / 2, rect[1]));
                         //pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
-                        gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
+                        //gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
+                        gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i]);
                 }
                 gamedrive.DrawConditionLine(team == 1 ? limitArea : h - limitArea);
             }
@@ -126,58 +127,67 @@ namespace LazyGeneral
 
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
-            Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
-            if(pos.X != -1)
-                if (isInitPhase)
-                {
-                    //bool exists = armies.Exists(x => x == pos);
-                    bool exists = armies.Any(x => x == pos);
-                    if (activeArmyNum != -1 && !exists && (team == 1 ? pos.Y : h - 1 - pos.Y) < limitArea)
+            if (MouseButtons == MouseButtons.Left)
+            {
+                Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
+                if (pos.X != -1)
+                    if (isInitPhase)
                     {
-                        armies[activeArmyNum] = pos;
-                        activeArmyNum = -1;
-                    }
-                    else if (activeArmyNum == -1 && exists)
-                    {
-                        activeArmyNum = 0;
-                        for (; activeArmyNum < armyCount && armies[activeArmyNum] != pos; activeArmyNum++) ;
-                        //activeArmyNum = armies.FindIndex(x => x == pos);
-                    }
-                }
-                else
-                {
-                    int layer = -1;
-                    if (curSteps[0].Any(x => x == pos))
-                        layer = 0;
-                    else if (curSteps[1].Any(x => x == pos))
-                        layer = 1;
-                    else if (curSteps[2].Any(x => x == pos))
-                        layer = 2;
-                    if (activeArmyNum == -1 && layer != -1)
-                    {
-                        activeArmyNum = 0;
-                        for (; activeArmyNum < armyCount && curSteps[layer][activeArmyNum] != pos; activeArmyNum++);
-                        activeLayer = layer;
-                    }
-                    else if (activeArmyNum != -1 && layer == -1 && activeLayer < 2)
-                    {
-                        if (client.SendXY(activeArmyNum, team, pos.X, pos.Y) && !curSteps[activeLayer].Any(x => x == pos))
+                        //bool exists = armies.Exists(x => x == pos);
+                        bool exists = armies.Any(x => x == pos);
+                        if (activeArmyNum != -1 && !exists && (team == 1 ? pos.Y : h - 1 - pos.Y) < limitArea)
                         {
-                            if (activeLayer == 0 && !order.Any(x => x == activeArmyNum))
-                            {
-                                order[approvedOrders] = activeArmyNum;
-                                approvedOrders++;
-                            }
-                            activeLayer++;
-                            curSteps[activeLayer][activeArmyNum] = pos;
+                            armies[activeArmyNum] = pos;
+                            activeArmyNum = -1;
+                        }
+                        else if (activeArmyNum == -1 && exists)
+                        {
+                            activeArmyNum = 0;
+                            for (; activeArmyNum < armyCount && armies[activeArmyNum] != pos; activeArmyNum++) ;
+                            //activeArmyNum = armies.FindIndex(x => x == pos);
                         }
                     }
-                    if (activeLayer == 2)
+                    else
                     {
-                        activeArmyNum = -1;
-                        activeLayer = -1;
+                        int layer = -1;
+                        if (curSteps[0].Any(x => x == pos))
+                            layer = 0;
+                        else if (curSteps[1].Any(x => x == pos))
+                            layer = 1;
+                        else if (curSteps[2].Any(x => x == pos))
+                            layer = 2;
+                        if (activeArmyNum == -1 && layer != -1)
+                        {
+                            activeArmyNum = 0;
+                            for (; activeArmyNum < armyCount && curSteps[layer][activeArmyNum] != pos; activeArmyNum++) ;
+                            activeLayer = layer;
+                        }
+                        else if (activeArmyNum != -1 && layer == -1 && activeLayer < 2)
+                        {
+                            if (client.SendXY(activeArmyNum, team, pos.X, pos.Y) && !curSteps[activeLayer].Any(x => x == pos))
+                            {
+                                if (activeLayer == 0 && !order.Any(x => x == activeArmyNum))
+                                {
+                                    order[approvedOrders] = activeArmyNum;
+                                    approvedOrders++;
+                                }
+                                activeLayer++;
+                                curSteps[activeLayer][activeArmyNum] = pos;
+                            }
+                        }
+                        if (activeLayer == 2)
+                        {
+                            activeArmyNum = -1;
+                            activeLayer = -1;
+                        }
                     }
-                }
+            }
+            else
+            {
+                activeArmyNum = -1;
+                activeLayer = -1;
+                client.SendXY(-2, -2, -2, -2);
+            }
             pictureBox1.Invalidate();
         }
 
@@ -246,6 +256,7 @@ namespace LazyGeneral
                     if (curSteps[2][i].X == -1)
                         curSteps[2][i] = curSteps[1][i];
                 }
+                client.SendXY(-1, -1, -1, -1);
                 client.SendOrder(team, order, curSteps);
             }
 
