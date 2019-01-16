@@ -17,11 +17,14 @@ namespace LazyServer
         static private TcpClient client1, client2;
         static private NetworkStream nwStream1, nwStream2;
         static string recieveData;
+        static int isRecieved = -1;
 
         static void Main(string[] args)
         {
             string Host = Dns.GetHostName();
             string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
+            Console.WriteLine("IP: " + IP);
+            Console.WriteLine("Port: 5000, 5001");
             Server server = new Server(IP, 5000);
 
             Logic();
@@ -32,6 +35,7 @@ namespace LazyServer
             int end = 3;
             Stages start = new Stages();
             start.StartStage();
+            //как то создать два потока
             while (end == 3)
             {
                 start.CyclicStage();
@@ -101,7 +105,7 @@ namespace LazyServer
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
                 {" "}, StringSplitOptions.RemoveEmptyEntries);
-            int team = int.Parse(tokens[0]);
+            int team = int.Parse(tokens[0])-1;//костыыыыыыыль из-за разной нумерации team
             int n = int.Parse(tokens[1]);
             int ind = 2;
 
@@ -181,55 +185,48 @@ namespace LazyServer
             SendIsCorrect(true, 2);
         }
 
-        static void AsyncRecieve1()
+        static async void AsyncRecieve1()
         {
             byte[] buffer1 = new byte[client1.ReceiveBufferSize];
-            //---read incoming stream---
-            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
-            //---convert the data received into a string---
-            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-        }
-
-        static void AsyncRecieve2()
-        {
-            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
-            //---read incoming stream---
-            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
-            //---convert the data received into a string---
-            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-        }
-
-        static private async void AsyncRecieve()
-        {
-            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
-            byte[] buffer2 = new byte[client2.ReceiveBufferSize];
             //---read incoming stream---
             int bytesRead = await nwStream1.ReadAsync(buffer1, 0, client1.ReceiveBufferSize);
-            bytesRead = await nwStream2.ReadAsync(buffer2, 0, client2.ReceiveBufferSize);
             //---convert the data received into a string---
             recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            isRecieved = 1;
+        }
+
+        static async void AsyncRecieve2()
+        {
+            byte[] buffer2 = new byte[client2.ReceiveBufferSize];
+            //---read incoming stream---
+            int bytesRead = await nwStream2.ReadAsync(buffer2, 0, client2.ReceiveBufferSize);
+            //---convert the data received into a string---
             recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
+            isRecieved = 2;
         }
 
         static private string _RecieveData()
         {
-            //while (recieveData == null) Task.Run(() => AsyncRecieve());
-            int team = -1;
-            byte[] buffer1 = new byte[client1.ReceiveBufferSize];
-            byte[] buffer2 = new byte[client2.ReceiveBufferSize];
-            //---read incoming stream---
-            int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
-            bytesRead = nwStream2.Read(buffer2, 0, client2.ReceiveBufferSize);
-            recieveData = "";
-            //---convert the data received into a string---
-            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-            team = 1;
-            if (recieveData == "")
-            {
-                recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
-                team = 2;
-            }
-            Console.WriteLine($"Client #{team} send: {recieveData}");
+            Task.Run(() => AsyncRecieve1());
+            Task.Run(() => AsyncRecieve2());
+            while (isRecieved == -1);
+            //int team = -1;
+            //byte[] buffer1 = new byte[client1.ReceiveBufferSize];
+            //byte[] buffer2 = new byte[client2.ReceiveBufferSize];
+            ////---read incoming stream---
+            //int bytesRead = nwStream1.Read(buffer1, 0, client1.ReceiveBufferSize);
+            //bytesRead = nwStream2.Read(buffer2, 0, client2.ReceiveBufferSize);
+            //recieveData = "";
+            ////---convert the data received into a string---
+            //recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            //team = 1;
+            //if (recieveData == "")
+            //{
+            //    recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
+            //    team = 2;
+            //}
+            Console.WriteLine($"Client #{isRecieved} send: {recieveData}");
+            isRecieved = -1;
             return recieveData;
         }
 
