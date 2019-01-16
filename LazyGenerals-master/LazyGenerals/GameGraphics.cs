@@ -70,11 +70,12 @@ namespace LazyGeneral
 		{
 			g.FillRectangle(Brushes.Black, netBorder, netBorder, widthWindow - netBorder * 2, heightWindow - netBorder * 2);
 
-			for (int x = netBorder, ix = 0; ix < width; x += dx, ix++)
-				for (int y = netBorder, iy = 0; iy < height; y += dy, iy++)
-					g.FillRectangle(gameFiled[ix][iy] == cellType.field ? Brushes.ForestGreen : Brushes.Aqua, x + cellBorder, y + cellBorder, dx - cellBorder * 2, dy - cellBorder * 2);
+            for (int x = netBorder, ix = 0; ix < width; x += dx, ix++)
+                for (int y = netBorder, iy = 0; iy < height; y += dy, iy++)
+                    //g.FillRectangle(gameFiled[ix][iy] == cellType.field ? Brushes.ForestGreen : Brushes.Aqua, x + cellBorder, y + cellBorder, dx - cellBorder * 2, dy - cellBorder * 2);
+                    g.DrawImage(gameFiled[ix][iy] == cellType.field ? images[4] : images[4], x + cellBorder, y + cellBorder, dx - cellBorder * 2, dy - cellBorder * 2);
 
-			return false;
+            return false;
 		}
 
 		private void CellLighting(Point cell)
@@ -116,19 +117,35 @@ namespace LazyGeneral
             return true;
 		}
 
-        public bool DrawArmy(int team, int x, int y, int num, double power)
+        public bool DrawArmy(int team, int x, int y, int num, double power, float opt)
         {
             if (x < 0 || x > width || y < 0 || y > height)
                 return false;
+            if (opt < 0)
+                opt = 0;
+            else if (opt > 1)
+                opt = 1;
             int armyReduce = 5;
             int _x = cellBorder + netBorder + dx * x + armyReduce;
             int _y = cellBorder + netBorder + dy * y + armyReduce;
             int _dx = dx - cellBorder * 2 - armyReduce * 2;
             int _dy = dy - cellBorder * 2 - armyReduce * 2;
+
+
             if (team == 1)
-                g.DrawImage(images[2], _x, _y, _dx, _dy);
+            {
+                if (opt < 0.999)
+                    g.DrawImage(SetImgOpacity(images[2],opt), _x, _y, _dx, _dy);
+                else
+                    g.DrawImage(images[2], _x, _y, _dx, _dy);
+            }
             else
-                g.DrawImage(images[3], _x, _y, _dx, _dy);
+            {
+                if (opt < 0.999)
+                    g.DrawImage(SetImgOpacity(images[3], opt), _x, _y, _dx, _dy);
+                else
+                    g.DrawImage(images[3], _x, _y, _dx, _dy);
+            }
 
             return true;
         }
@@ -137,18 +154,20 @@ namespace LazyGeneral
         {
             int armyReduce = 5;
             int _x, _y;
+            int _dx = dx - cellBorder * 2 - armyReduce * 2;
+            int _dy = dy - cellBorder * 2 - armyReduce * 2;
             if (team == 1)
             {
-                _x = cellBorder + netBorder + dx * x + armyReduce;
-                _y = cellBorder + netBorder + dy * y + armyReduce;
+                _x = cellBorder + netBorder + armyReduce;
+                _y = cellBorder + netBorder + armyReduce;
+                g.DrawImage(images[0], _x, _y, _dx, _dy);
             }
             else
             {
-                _x = cellBorder + netBorder + dx * x + armyReduce;
-                _y = cellBorder + netBorder + dy * y + armyReduce;
+                _x = cellBorder + netBorder + dx * width + armyReduce;
+                _y = cellBorder + netBorder + dy * height + armyReduce;
+                g.DrawImage(images[1], _x, _y, _dx, _dy);
             }
-            int _dx = dx - cellBorder * 2 - armyReduce * 2;
-            int _dy = dy - cellBorder * 2 - armyReduce * 2;
         }
 
         public void DrawPath(Color c, Point b, Point e)

@@ -97,7 +97,7 @@ namespace LazyGeneral
                         //pe.Graphics.DrawString(i.ToString(), new Font("Microsoft Sans Serif", 13), Brushes.Black, new Point(rect[0] + rect[2] / 2, rect[1]));
                         //pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
                         //gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
-                        gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i]);
+                        gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
                 }
                 gamedrive.DrawConditionLine(team == 1 ? limitArea : h - limitArea);
             }
@@ -125,9 +125,9 @@ namespace LazyGeneral
             }
 		}
 
-		private void pictureBox1_Click(object sender, EventArgs e)
-		{
-            if (MouseButtons == MouseButtons.Left)
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
             {
                 Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
                 if (pos.X != -1)
