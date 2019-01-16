@@ -22,6 +22,8 @@ namespace LazyGeneral
 		private int dx, dy;
 		//последнее выделение клетки
 		private Point cellLightning;
+        //выделение ограничение расстановки
+        private Pen conditionPen;
 		public Graphics g { set; get; }
 		
 
@@ -45,7 +47,10 @@ namespace LazyGeneral
                 for (int j = 0; j < height; j++)
                     gameFiled[i][j] = (cellType)fieled[i,j];
 
-           return true;
+
+            conditionPen = new Pen(Color.Yellow, 4);
+            conditionPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+            return true;
 		}
 
 		public bool PaintBattleField()
@@ -82,7 +87,7 @@ namespace LazyGeneral
 				return new Point(-1, -1);
 		}
 
-		public bool DrawArmy(Color c, int x, int y)
+		public bool DrawArmy(Color c, int x, int y, int num, double power)
 		{
 			if (x < 0 || x > width || y < 0 || y > height)
 				return false;
@@ -94,8 +99,29 @@ namespace LazyGeneral
 			int _dy = dy - cellBorder * 2 - armyReduce * 2;
             
 			g.DrawRectangle(new Pen(c,4), _x, _y, _dx, _dy);
+            g.DrawString(Math.Round(power,0).ToString(), new Font("Microsoft Sans Serif", 12), Brushes.Black, new Point(_x + 15, _y + 5));
+            g.DrawString(num.ToString(), new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x + 2, _y + _dy - 15));
             return true;
 		}
+
+        public void DrawPath(Color c, Point b, Point e)
+        {
+            int armyReduce = 5;
+            b.X = cellBorder + netBorder + dx * b.X + armyReduce + (dx - cellBorder * 2 - armyReduce * 2) / 2;
+            b.Y = cellBorder + netBorder + dy * b.Y + armyReduce + (dy - cellBorder * 2 - armyReduce * 2) / 2;
+            e.X = cellBorder + netBorder + dx * e.X + armyReduce + (dx - cellBorder * 2 - armyReduce * 2) / 2;
+            e.Y = cellBorder + netBorder + dy * e.Y + armyReduce + (dy - cellBorder * 2 - armyReduce * 2) / 2;
+
+            g.DrawLine(new Pen(c, 3), b, e);
+        }
+
+        public void DrawConditionLine(int row)
+        {
+            int _x = cellBorder + netBorder;
+            int _y = cellBorder + netBorder + dy * row;
+            int _dx = cellBorder + netBorder + dx * width;
+            g.DrawLine(conditionPen, new Point(_x, _y), new Point(_dx, _y));
+        }
 
         public int[] DrawArmy(int x, int y)
         {

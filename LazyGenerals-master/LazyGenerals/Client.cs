@@ -22,8 +22,8 @@ namespace LazyServer
             this.serverIP = serverIP;
 
             //---create a TCPClient object at the IP and port no.---
-            client = new TcpClient(serverIP, portNo);
-            nwStream = client.GetStream();
+            //client = new TcpClient(serverIP, portNo);
+            //nwStream = client.GetStream();
         }
 
         public void SendHello(int team)
@@ -98,8 +98,8 @@ namespace LazyServer
             data += " " + n;
             for(int i=0;i<n;i++)
             {
-                data += $" {orders[i]} {armies[orders[i]][1].X} {armies[orders[i]][1].Y}";
-                data += $" 0 {armies[orders[i]][2].X} {armies[orders[i]][2].Y}";
+                data += $" {orders[i]} {armies[1][orders[i]].X} {armies[1][orders[i]].Y}";
+                data += $" 0 {armies[2][orders[i]].X} {armies[2][orders[i]].Y}";
             }
             _SendData(data);
         }

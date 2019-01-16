@@ -21,8 +21,11 @@ namespace LazyGeneral
 
         private void buttonStartGame_Click(object sender, EventArgs e)
         {
-            Client c = new Client("192.168.1.100", 5000);
-            c.RecieveIsCorrect();
+            string Host = Dns.GetHostName();
+            string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
+            Client c = new Client(IP, 5001);
+            //Client c = new Client("192.168.1.100", 5000);
+            //c.RecieveIsCorrect();
             GameWindow g = new GameWindow(c, 1);
             g.Show();
             Hide();
@@ -30,11 +33,11 @@ namespace LazyGeneral
 
         private void buttonConnectGame_Click(object sender, EventArgs e)
         {
-            //string Host = Dns.GetHostName();
-            //string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
-            //Client c = new Client(IP, 5001);
-            Client c = new Client("192.168.1.100", 5001);
-            c.RecieveIsCorrect();
+            string Host = Dns.GetHostName();
+            string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
+            Client c = new Client(IP, 5001);
+            //Client c = new Client("192.168.1.100", 5001);
+            //c.RecieveIsCorrect();
             GameWindow g = new GameWindow(c, 2);
             g.Show();
             Hide();
