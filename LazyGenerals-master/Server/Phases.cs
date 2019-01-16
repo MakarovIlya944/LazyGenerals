@@ -156,7 +156,8 @@ namespace LazyGeneral
             for (int k = 0; k < 2; k++)
             {
                 (sideNum, armys) = Server.GetInfoOrders();
-                for (int i = 0; i < armyCount[sideNum] * 2; i += 2)
+                //for (int i = 0; i < armyCount[sideNum] * 2; i += 2)
+                for (int i = 0; i < armys.GetLength(0); i += 2)
                     AddArmy(sideNum, armys[i, 0], armys[i, 1], armys[i, 2], armys[i + 1, 1], armys[i + 1, 2]);
             }
 

@@ -159,7 +159,7 @@ namespace LazyServer
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < 3; j++)
                     army[i, j] = int.Parse(tokens[2 + i * n + j]);
-            return (team, army);
+            return (team - 1, army);
         }
         //==================================================================================================
 
