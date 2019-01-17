@@ -11,7 +11,7 @@ namespace LazyGeneral
     {
         public void StartStage()
         {
-            Battleground field = new Battleground("100%");
+            Battleground field = new Battleground("85%");
             int armyCount = 5;
             // Отправляю поле бля и макс мощь
             int[,] poi = new int[field.SizeX, field.SizeY];

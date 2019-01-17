@@ -19,15 +19,21 @@ namespace LazyGeneral
                             tile[i, j] = types.field;
                     break;
 
-                case "70%":
+                case "85%":
                     Random rand = new Random();
                     for (int i = 0; i < sizeX; i++)
                         for (int j = 0; j < sizeY; j++)
                         {
                             double res = rand.NextDouble();
-                            if (res <= 0.3)
+                            if (res <= 0.15)
                                 tile[i, j] = types.water;
                             else tile[i, j] = types.field;
+                        }
+                    for (int i = 0; i < 2; i++)
+                        for (int j = 0; j < 2; j++)
+                        {
+                            tile[i, j] = types.field;
+                            tile[sizeX - i - 1, sizeY - j - 1] = types.field;
                         }
                     break;
             }
