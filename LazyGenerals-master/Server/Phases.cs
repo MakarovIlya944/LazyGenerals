@@ -34,7 +34,7 @@ namespace LazyGeneral
         private Battle[] battles;
         private int battlesCount;
 
-        private int maxArmy;
+        public int maxArmy;
         private List<MoveOrder> commands;
         private int[] curCommand = new int[2];
         //=======================Свойства=======================//
