@@ -163,6 +163,10 @@ namespace LazyGeneral
         public void Orders() // алерт, много говнокода
         {
             int sideNum;
+
+            Task.Run(() => Checking());
+            Task.Run(() => Checking());
+            while (!Server.quit1 || !Server.quit2) ;
             Server.quit1 = false;
             Server.quit2 = false;
             Server.SendInfo(true, 0);

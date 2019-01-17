@@ -178,7 +178,7 @@ namespace LazyGeneral
         /// <param name="y">у-координата клетки</param>
         /// <param name="pwr1">мощь красной армии</param>
         /// <param name="pwr2">мощь синей армии</param>
-        public void DrawBattle(int x, int y, int pwr1, int pwr2)
+        public void DrawBattle(int x, int y, double pwr1, double pwr2)
         {
             int _x = cellBorder + netBorder + dx * x + armyReduce;
             int _y = cellBorder + netBorder + dy * y + armyReduce;
