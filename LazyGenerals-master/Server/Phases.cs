@@ -87,68 +87,80 @@ namespace LazyGeneral
             }
         }
 
-        public void Checking()
+        public void Checking(int side)
         {
             int armyNum;
+            bool localQuit;
             int sideNum;
             int[] newLoc;
             int[] temp;
-            while (!Server.quit1 || !Server.quit2)
+            while (!Server.quit[side])
             {
                 (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем первую часть хода
-                switch (armyNum)
+                if (sideNum == side)
                 {
-                    case -1:
-                        if (sideNum == 0)
-                            Server.quit1 = true;
-                        else Server.quit2 = true;
-                        Server.SendInfo(true, sideNum);
-                        break;
+                    switch (armyNum)
+                    {
+                        case -1:
+                            Server.quit[side] = true;
+                            Server.SendInfo(true, sideNum);
+                            break;
 
-                    case -2:
-                        Server.SendInfo(true, sideNum);
-                        break;
+                        case -2:
+                            Server.SendInfo(true, sideNum);
+                            break;
 
-                    default:
-                        switch (Check(teams[armyNum, sideNum].Location, newLoc))
-                        {
-                            case true:
-                                //server.SendIsCorrect(true);
-                                Server.SendInfo(true, sideNum);
-                                temp = newLoc; // запоминаем первую часть хода
-                                (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
-                                switch (armyNum)
-                                {
-                                    case -1:
-                                        Server.SendInfo(true, sideNum);
-                                        if (sideNum == 1)
-                                            Server.quit1 = true;
-                                        else Server.quit2 = true;
-                                        break;
-
-                                    case -2:
-                                        Server.SendInfo(true, sideNum);
-                                        break;
-
-                                    default:
-                                        switch (Check(temp, newLoc))
+                        default:
+                            switch (Check(teams[armyNum, sideNum].Location, newLoc))
+                            {
+                                case true:
+                                    //server.SendIsCorrect(true);
+                                    Server.SendInfo(true, sideNum);
+                                    temp = newLoc; // запоминаем первую часть хода
+                                    localQuit = false;
+                                    while (!localQuit)
+                                    {
+                                        (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
+                                        if (sideNum == side)
                                         {
-                                            case true:
-                                                Server.SendInfo(true, sideNum);
-                                                break;
+                                            switch (armyNum)
+                                            {
+                                                case -1:
+                                                    Server.SendInfo(true, sideNum);
+                                                    Server.quit[side] = true;
+                                                    localQuit = true;
 
-                                            case false:
-                                                Server.SendInfo(false, sideNum);
-                                                break;
+                                                    break;
+
+                                                case -2:
+                                                    Server.SendInfo(true, sideNum);
+                                                    localQuit = true;
+                                                    break;
+
+                                                default:
+                                                    switch (Check(temp, newLoc))
+                                                    {
+                                                        case true:
+                                                            Server.SendInfo(true, sideNum);
+                                                            break;
+
+                                                        case false:
+                                                            Server.SendInfo(false, sideNum);
+                                                            break;
+                                                    }
+                                                    break;
+                                            }
+                                            localQuit = true;
                                         }
-                                        break;
-                                }
-                                break;
-                            case false:
-                                Server.SendInfo(false, sideNum);
-                                break;
-                        }
-                        break;
+                                    }
+                                    break;
+                                    
+                                case false:
+                                    Server.SendInfo(false, sideNum);
+                                    break;
+                            } 
+                            break;
+                    }
                 }
             }
 
@@ -163,8 +175,6 @@ namespace LazyGeneral
         public void Orders() // алерт, много говнокода
         {
             int sideNum;
-            Server.quit1 = false;
-            Server.quit2 = false;
             Server.SendInfo(true, 0);
             Server.SendInfo(true, 1);
             int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2

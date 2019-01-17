@@ -17,8 +17,7 @@ namespace LazyServer
         static private TcpClient client1, client2;
         static private NetworkStream nwStream1, nwStream2;
         static string recieveData1, recieveData2;
-        public static bool quit1 = false;
-        public static bool quit2 = false;
+        public static bool[] quit = { false, false };
         static bool[] isRecieved = new bool[2] { false, false };
 
         static void Main(string[] args)
