@@ -128,10 +128,12 @@ namespace LazyGeneral
                                                 case -1:
                                                     Server.SendInfo(true, sideNum);
                                                     Server.quit[side] = true;
+                                                    localQuit = true;
                                                     break;
 
                                                 case -2:
                                                     Server.SendInfo(true, sideNum);
+                                                    localQuit = true;
                                                     break;
 
                                                 default:
@@ -147,7 +149,6 @@ namespace LazyGeneral
                                                     }
                                                     break;
                                             }
-                                            localQuit = true;
                                         }
                                     }
                                     break;
