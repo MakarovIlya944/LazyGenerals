@@ -27,7 +27,8 @@ namespace LazyGeneral
         private Pen conditionPen;
         //спрайты
         private Image[] images;
-		public Graphics g { set; get; }
+        int armyReduce = 5;
+        public Graphics g { set; get; }
 		
 
 		public bool Init(int _w, int _h, int _wNum, int _hNum, int[,] fieled)
@@ -54,14 +55,14 @@ namespace LazyGeneral
             conditionPen = new Pen(Color.Yellow, 4);
             conditionPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
 
-            images = new Image[6];
+            images = new Image[7];
             images[0] = Image.FromFile("1.png");
             images[1] = Image.FromFile("2.png");
             images[2] = Image.FromFile("3.png");
             images[3] = Image.FromFile("4.png");
             images[4] = Image.FromFile("5.png");
             images[5] = Image.FromFile("6.png");
-            
+            images[6] = Image.FromFile("7.png");
 
             return true;
 		}
@@ -105,7 +106,7 @@ namespace LazyGeneral
 			if (x < 0 || x > width || y < 0 || y > height)
 				return false;
 
-			int armyReduce = 5;
+			
 			int _x = cellBorder + netBorder + dx * x + armyReduce;
 			int _y = cellBorder + netBorder + dy * y + armyReduce;
 			int _dx = dx - cellBorder * 2 - armyReduce * 2;
@@ -125,7 +126,7 @@ namespace LazyGeneral
                 opt = 0;
             else if (opt > 1)
                 opt = 1;
-            int armyReduce = 5;
+            
             int _x = cellBorder + netBorder + dx * x + armyReduce;
             int _y = cellBorder + netBorder + dy * y + armyReduce;
             int _dx = dx - cellBorder * 2 - armyReduce * 2;
@@ -137,6 +138,7 @@ namespace LazyGeneral
                     g.DrawImage(SetImgOpacity(images[2],opt), _x, _y, _dx, _dy);
                 else
                     g.DrawImage(images[2], _x, _y, _dx, _dy);
+                g.DrawString(Math.Round(power, 0).ToString(), new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x, _y));
             }
             else
             {
@@ -144,15 +146,14 @@ namespace LazyGeneral
                     g.DrawImage(SetImgOpacity(images[3], opt), _x, _y, _dx, _dy);
                 else
                     g.DrawImage(images[3], _x, _y, _dx, _dy);
+                g.DrawString(Math.Round(power, 0).ToString(), new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x + _dx/2 + 5, _y));
             }
-            g.DrawString($"{num}  {Math.Round(power, 0)}", new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x + 2, _y + _dy - 15));
-
+            g.DrawString(num.ToString(), new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x, _y + _dy - 10));
             return true;
         }
 
         public void DrawBase(int team)
         {
-            int armyReduce = 5;
             int _x, _y;
             int _dx = dx - cellBorder * 2 - armyReduce * 2;
             int _dy = dy - cellBorder * 2 - armyReduce * 2;
@@ -170,9 +171,27 @@ namespace LazyGeneral
             }
         }
 
+        /// <summary>
+        /// Рисует сражение
+        /// </summary>
+        /// <param name="x">х-координата клетки</param>
+        /// <param name="y">у-координата клетки</param>
+        /// <param name="pwr1">мощь красной армии</param>
+        /// <param name="pwr2">мощь синей армии</param>
+        public void DrawBattle(int x, int y, int pwr1, int pwr2)
+        {
+            int _x = cellBorder + netBorder + dx * x + armyReduce;
+            int _y = cellBorder + netBorder + dy * y + armyReduce;
+            int _dx = dx - cellBorder * 2 - armyReduce * 2;
+            int _dy = dy - cellBorder * 2 - armyReduce * 2;
+            g.DrawImage(images[6], _x, _y, _dx, _dy);
+            g.DrawString(pwr1.ToString(), new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x, _y + 5));
+            g.DrawString(pwr2.ToString(), new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x + _dx/2, _y + _dy - 15));
+        }
+
         public void DrawPath(Color c, Point b, Point e)
         {
-            int armyReduce = 5;
+            
             b.X = cellBorder + netBorder + dx * b.X + armyReduce + (dx - cellBorder * 2 - armyReduce * 2) / 2;
             b.Y = cellBorder + netBorder + dy * b.Y + armyReduce + (dy - cellBorder * 2 - armyReduce * 2) / 2;
             e.X = cellBorder + netBorder + dx * e.X + armyReduce + (dx - cellBorder * 2 - armyReduce * 2) / 2;

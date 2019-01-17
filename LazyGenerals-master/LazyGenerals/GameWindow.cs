@@ -31,6 +31,7 @@ namespace LazyGeneral
         private int curStep = 0;
         private const int armyCount = 5;
         private const int limitArea = 3;
+        private int isEnd = 3;
 
         public GameWindow(Client client, int t)
 		{
@@ -80,7 +81,7 @@ namespace LazyGeneral
             labelA4num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
             labelA5num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
             gamedrive.Init(pictureBox1.Width, pictureBox1.Height, w, h, F);
-            Text = team == 1 ? "Хост" : "Клиент";
+            Text = team == 1 ? "Хост: Красные" : "Клиент: Синие";
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs pe)
@@ -91,6 +92,7 @@ namespace LazyGeneral
             //int[] rect = new int[4];
             gamedrive.DrawBase(team);
             gamedrive.DrawBase(enemyteam);
+            gamedrive.DrawBattle(5, 5, 100, 1213);
             if (isInitPhase)
             {
                 for (int i = 0; i < armyCount; i++)
@@ -259,7 +261,7 @@ namespace LazyGeneral
                 client.SendInitPlacement(team, powers, position);
                 for (int i = 0; i < armyCount; i++)
                     curSteps[0][i] = armies[i];
-                labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
+                
             }
             else
             {
@@ -274,21 +276,33 @@ namespace LazyGeneral
                     if (curSteps[2][i].X == -1)
                         curSteps[2][i] = curSteps[1][i];
                 }
-                client.SendXY(-1, -1, -1, -1);
+                if (activeArmyNum != -1)
+                    client.SendXY(-2, team, -2, -2);
+                client.SendXY(-1, team, -1, -1);
+                client.RecieveIsCorrect();
                 client.SendOrder(team, order, curSteps);
+                isEnd = client.RecieveEnd();
+                curStep++;
+                approvedOrders = 0;
             }
-
-            (powers, order, position, enemyPowers, order, enemyPosition) = client.RecievePlacement(team);
-            for (int i = 0; i < armyCount; i++)
+            if (isEnd == 3)
             {
-                armies[i].X = position[i, 0];
-                armies[i].Y = position[i, 1];
-                enemyArmies[i].X = enemyPosition[i, 0];
-                enemyArmies[i].Y = enemyPosition[i, 1];
-                curSteps[0][i] = armies[i];
-                order[i] = -1;
+                (powers, order, position, enemyPowers, order, enemyPosition) = client.RecievePlacement(team);
+                for (int i = 0; i < armyCount; i++)
+                {
+                    armies[i].X = position[i, 0];
+                    armies[i].Y = position[i, 1];
+                    enemyArmies[i].X = enemyPosition[i, 0];
+                    enemyArmies[i].Y = enemyPosition[i, 1];
+                    curSteps[0][i] = armies[i];
+                    curSteps[1][i].X = -1;
+                    curSteps[2][i].X = -1;
+                    order[i] = -1;
+                }
             }
-
+            activeArmyNum = -1;
+            activeLayer = -1;
+            labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
             pictureBox1.Invalidate();
         }
 

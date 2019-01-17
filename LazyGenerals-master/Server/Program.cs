@@ -16,10 +16,10 @@ namespace LazyServer
         private TcpListener listener1, listener2;
         static private TcpClient client1, client2;
         static private NetworkStream nwStream1, nwStream2;
-        static string recieveData;
+        static string recieveData1, recieveData2;
         public static bool quit1 = false;
         public static bool quit2 = false;
-        static int isRecieved = -1;
+        static bool[] isRecieved = new bool[2] { false, false };
 
         static void Main(string[] args)
         {
@@ -158,7 +158,7 @@ namespace LazyServer
             int team = int.Parse(tokens[0]);
             int n = int.Parse(tokens[1]);
             int[,] army = new int[n * 2, 3];
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < n*2; i++)
                 for (int j = 0; j < 3; j++)
                     army[i, j] = int.Parse(tokens[2 + i * 3 + j]);
             return (team - 1, army);
@@ -199,8 +199,8 @@ namespace LazyServer
             //---read incoming stream---
             int bytesRead = await nwStream1.ReadAsync(buffer1, 0, client1.ReceiveBufferSize);
             //---convert the data received into a string---
-            recieveData = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
-            isRecieved = 1;
+            recieveData1 = Encoding.ASCII.GetString(buffer1, 0, bytesRead);
+            isRecieved[0] = true;
         }
 
         static async void AsyncRecieve2()
@@ -209,17 +209,22 @@ namespace LazyServer
             //---read incoming stream---
             int bytesRead = await nwStream2.ReadAsync(buffer2, 0, client2.ReceiveBufferSize);
             //---convert the data received into a string---
-            recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
-            isRecieved = 2;
+            recieveData2 = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
+            isRecieved[1] = true;
         }
 
         static private string _RecieveData()
         {
-            if (!quit1)
-                Task.Run(() => AsyncRecieve1());
-            if (!quit2)
-                Task.Run(() => AsyncRecieve2());
-            while (isRecieved == -1);
+            //if (!quit1)
+            Task.Run(() => AsyncRecieve1());
+            //if (!quit2)
+            Task.Run(() => AsyncRecieve2());
+            if (quit1)
+                while (!isRecieved[1]) ;
+            else if (quit2)
+                while (!isRecieved[0]) ;
+            else
+                while (!isRecieved[0] && !isRecieved[1]) ;
             //int team = -1;
             //byte[] buffer1 = new byte[client1.ReceiveBufferSize];
             //byte[] buffer2 = new byte[client2.ReceiveBufferSize];
@@ -235,9 +240,19 @@ namespace LazyServer
             //    recieveData = Encoding.ASCII.GetString(buffer2, 0, bytesRead);
             //    team = 2;
             //}
-            Console.WriteLine($"Client #{isRecieved} send: {recieveData}");
-            isRecieved = -1;
-            return recieveData;
+            if (isRecieved[0])
+            {
+                Console.WriteLine($"Client #1 send: {recieveData1}");
+                isRecieved[0] = false;
+                return recieveData1;
+            }
+            else if (isRecieved[1])
+            {
+                Console.WriteLine($"Client #2 send: {recieveData2}");
+                isRecieved[1] = false;
+                return recieveData2;
+            }
+            return "";
         }
 
         public ValueTuple<int, int, int, int> RecieveXY()

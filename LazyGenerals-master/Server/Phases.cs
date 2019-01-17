@@ -101,7 +101,7 @@ namespace LazyGeneral
                     switch (armyNum)
                     {
                         case -1:
-                        if (sideNum == 1)
+                        if (sideNum == 0)
                             Server.quit1 = true;
                         else Server.quit2 = true;
                         Server.SendInfo(true, sideNum);
@@ -155,6 +155,8 @@ namespace LazyGeneral
             }
             Server.quit1 = false;
             Server.quit2 = false;
+            Server.SendInfo(true, 0);
+            Server.SendInfo(true, 1);
             int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2
             // Дважды получаю список приказов, от каждого клиента по одному
             for (int k = 0; k < 2; k++)
