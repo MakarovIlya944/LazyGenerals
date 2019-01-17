@@ -175,6 +175,8 @@ namespace LazyGeneral
             Task.Run(() => Checking(1));
             Task.Run(() => Checking(0));
             while (!Server.quit[0] || !Server.quit[1]) ;
+            Server.quit[0] = false;
+            Server.quit[1] = false;
             Server.SendInfo(true, 0);
             Server.SendInfo(true, 1);
             int sideNum;

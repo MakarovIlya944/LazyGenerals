@@ -28,16 +28,16 @@ namespace LazyGeneral
             //string Host = Dns.GetHostName();
             //string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
             //Client c = new Client(IP, 5001);
-            if(!i.Visible)
+            /*if(!i.Visible)
                 i.Show();
             string q;
-            i.GetIp(out q);
+            i.GetIp(out q);*/
 
-            /*Client c = new Client("192.168.1.7", 5000);
+            Client c = new Client("192.168.1.7", 5000);
             c.RecieveIsCorrect();
             GameWindow g = new GameWindow(c, 1);
             g.Show();
-            Hide();*/
+            Hide();
         }
 
         public void Connect(string ip)
