@@ -14,22 +14,37 @@ namespace LazyGeneral
 {
 	public partial class MainWindow : Form
 	{
-		public MainWindow()
+        IpConfig i;
+
+
+        public MainWindow()
 		{
 			InitializeComponent();
-		}
+            i = new IpConfig();
+        }
 
         private void buttonStartGame_Click(object sender, EventArgs e)
         {
             //string Host = Dns.GetHostName();
             //string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
             //Client c = new Client(IP, 5001);
-            Client c = new Client("192.168.1.7", 5000);
+            if(!i.Visible)
+                i.Show();
+            string q;
+            i.GetIp(out q);
+
+            /*Client c = new Client("192.168.1.7", 5000);
             c.RecieveIsCorrect();
             GameWindow g = new GameWindow(c, 1);
             g.Show();
-            Hide();
+            Hide();*/
         }
+
+        public void Connect(string ip)
+        {
+
+        }
+
 
         private void buttonConnectGame_Click(object sender, EventArgs e)
         {
