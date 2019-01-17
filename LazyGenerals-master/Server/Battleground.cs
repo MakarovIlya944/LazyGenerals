@@ -35,6 +35,18 @@ namespace LazyGeneral
                             tile[i, j] = types.field;
                             tile[sizeX - i - 1, sizeY - j - 1] = types.field;
                         }
+                    //костылики
+                    tile[1, 0] = types.field;
+                    tile[2, 0] = types.field;
+                    tile[3, 0] = types.field;
+                    tile[4, 0] = types.field;
+                    tile[5, 0] = types.field;
+
+                    tile[1, sizeY - 1] = types.field;
+                    tile[2, sizeY - 1] = types.field;
+                    tile[3, sizeY - 1] = types.field;
+                    tile[4, sizeY - 1] = types.field;
+                    tile[5, sizeY - 1] = types.field;
                     break;
             }
         }

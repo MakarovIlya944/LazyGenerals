@@ -342,10 +342,12 @@ namespace LazyGeneral
             powers[3] = trackBarA4.Value * maxOneArmy / 100.0;
             powers[4] = trackBarA5.Value * maxOneArmy / 100.0;
 
-            var el = gamedrive.GetStartedPosition(team, limitArea);
-
-            for (int i = 0; i < 5; i++)
-                armies[i] = el[i];
+            int _h = team == 1 ? 0 : h - 1;
+            armies[0] = new Point(1, _h);
+            armies[1] = new Point(2, _h);
+            armies[2] = new Point(3, _h);
+            armies[3] = new Point(4, _h);
+            armies[4] = new Point(5, _h);
 
             //включить другой режим
             pictureBox1.Visible = true;
