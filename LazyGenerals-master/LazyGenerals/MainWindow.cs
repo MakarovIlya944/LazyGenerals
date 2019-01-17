@@ -42,5 +42,10 @@ namespace LazyGeneral
             g.Show();
             Hide();
         }
+
+        private void buttonExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
