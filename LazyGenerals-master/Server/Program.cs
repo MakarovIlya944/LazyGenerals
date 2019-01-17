@@ -17,6 +17,8 @@ namespace LazyServer
         static private TcpClient client1, client2;
         static private NetworkStream nwStream1, nwStream2;
         static string recieveData;
+        public static bool quit1 = false;
+        public static bool quit2 = false;
         static int isRecieved = -1;
 
         static void Main(string[] args)
@@ -158,7 +160,7 @@ namespace LazyServer
             int[,] army = new int[n * 2, 3];
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < 3; j++)
-                    army[i, j] = int.Parse(tokens[2 + i * n + j]);
+                    army[i, j] = int.Parse(tokens[2 + i * 3 + j]);
             return (team - 1, army);
         }
         //==================================================================================================
@@ -213,8 +215,10 @@ namespace LazyServer
 
         static private string _RecieveData()
         {
-            Task.Run(() => AsyncRecieve1());
-            Task.Run(() => AsyncRecieve2());
+            if (!quit1)
+                Task.Run(() => AsyncRecieve1());
+            if (!quit2)
+                Task.Run(() => AsyncRecieve2());
             while (isRecieved == -1);
             //int team = -1;
             //byte[] buffer1 = new byte[client1.ReceiveBufferSize];

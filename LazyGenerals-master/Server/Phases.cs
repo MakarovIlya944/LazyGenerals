@@ -93,16 +93,17 @@ namespace LazyGeneral
             int sideNum;
             int[] newLoc;
             int[] temp;
-            bool quit = false; // количество утвержденных движений
             // отправка двумя партиями, но подряд (для удобства обработки сообщений от двух клиентов
             // возвращаю либо false, либо true true, либо true false на каждую команду
-            while (!quit)
+            while (!Server.quit1 || !Server.quit2)
             {
                 (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем первую часть хода
                     switch (armyNum)
                     {
                         case -1:
-                            quit = true;
+                        if (sideNum == 1)
+                            Server.quit1 = true;
+                        else Server.quit2 = true;
                         Server.SendInfo(true, sideNum);
                         break;
 
@@ -122,7 +123,9 @@ namespace LazyGeneral
                                     {
                                         case -1:
                                         Server.SendInfo(true, sideNum);
-                                        quit = true;
+                                        if (sideNum == 1)
+                                            Server.quit1 = true;
+                                        else Server.quit2 = true;
                                         break;
 
                                         case -2:
@@ -150,7 +153,8 @@ namespace LazyGeneral
                             break;
                     }  
             }
-
+            Server.quit1 = false;
+            Server.quit2 = false;
             int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2
             // Дважды получаю список приказов, от каждого клиента по одному
             for (int k = 0; k < 2; k++)
