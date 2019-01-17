@@ -87,72 +87,82 @@ namespace LazyGeneral
             }
         }
 
-        public void Orders() // алерт, много говнокода
+        public void Checking()
         {
             int armyNum;
             int sideNum;
             int[] newLoc;
             int[] temp;
-            // отправка двумя партиями, но подряд (для удобства обработки сообщений от двух клиентов
-            // возвращаю либо false, либо true true, либо true false на каждую команду
             while (!Server.quit1 || !Server.quit2)
             {
                 (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем первую часть хода
-                    switch (armyNum)
-                    {
-                        case -1:
+                switch (armyNum)
+                {
+                    case -1:
                         if (sideNum == 0)
                             Server.quit1 = true;
                         else Server.quit2 = true;
                         Server.SendInfo(true, sideNum);
                         break;
 
-                        case -2:
+                    case -2:
                         Server.SendInfo(true, sideNum);
                         break;
 
-                        default:
-                            switch (Check(teams[armyNum, sideNum].Location, newLoc))
-                            {
-                                case true:
-                                    //server.SendIsCorrect(true);
-                                    Server.SendInfo(true, sideNum);
-                                    temp = newLoc; // запоминаем первую часть хода
-                                    (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
-                                    switch (armyNum)
-                                    {
-                                        case -1:
+                    default:
+                        switch (Check(teams[armyNum, sideNum].Location, newLoc))
+                        {
+                            case true:
+                                //server.SendIsCorrect(true);
+                                Server.SendInfo(true, sideNum);
+                                temp = newLoc; // запоминаем первую часть хода
+                                (armyNum, sideNum, newLoc) = Server.GetInfoMoveCheck(); // получаем вторую часть хода
+                                switch (armyNum)
+                                {
+                                    case -1:
                                         Server.SendInfo(true, sideNum);
                                         if (sideNum == 1)
                                             Server.quit1 = true;
                                         else Server.quit2 = true;
                                         break;
 
-                                        case -2:
+                                    case -2:
                                         Server.SendInfo(true, sideNum);
                                         break;
 
-                                        default:
-                                            switch (Check(temp, newLoc))
-                                            {
-                                                case true:
-                                                    Server.SendInfo(true, sideNum);
-                                                    break;
+                                    default:
+                                        switch (Check(temp, newLoc))
+                                        {
+                                            case true:
+                                                Server.SendInfo(true, sideNum);
+                                                break;
 
-                                                case false:
-                                                    Server.SendInfo(false, sideNum);
-                                                    break;
-                                            }
-                                            break;
-                                    }
-                                    break;
-                                case false:
-                                    Server.SendInfo(false, sideNum);
-                                    break;
-                            }
-                            break;
-                    }  
+                                            case false:
+                                                Server.SendInfo(false, sideNum);
+                                                break;
+                                        }
+                                        break;
+                                }
+                                break;
+                            case false:
+                                Server.SendInfo(false, sideNum);
+                                break;
+                        }
+                        break;
+                }
             }
+
+            bool Check(int[] curLoc, int[] nextLoc) // Проверяю, движется ли армия только на одну клетку и что эта клетка не вода
+            {
+                if (Math.Abs(curLoc[0] + curLoc[1] - (nextLoc[0] + nextLoc[1])) == 1 && points[nextLoc[0], nextLoc[1]] == 1)
+                    return true; // можно
+                return false; // нельзя
+            }
+        }
+
+        public void Orders() // алерт, много говнокода
+        {
+            int sideNum;
             Server.quit1 = false;
             Server.quit2 = false;
             Server.SendInfo(true, 0);
@@ -162,18 +172,9 @@ namespace LazyGeneral
             for (int k = 0; k < 2; k++)
             {
                 (sideNum, armys) = Server.GetInfoOrders();
-                //for (int i = 0; i < armyCount[sideNum] * 2; i += 2)
                 for (int i = 0; i < armys.GetLength(0); i += 2)
                     AddArmy(sideNum, armys[i, 0], armys[i, 1], armys[i, 2], armys[i + 1, 1], armys[i + 1, 2]);
             }
-
-            bool Check(int[] curLoc, int[] nextLoc) // Проверяю, движется ли армия только на одну клетку и что эта клетка не вода
-            {
-                if (Math.Abs(curLoc[0] + curLoc[1] - (nextLoc[0] + nextLoc[1])) == 1 && points[nextLoc[0], nextLoc[1]] == 1)
-                    return true; // можно
-                return false; // нельзя
-            }
-
 
             void AddArmy(int side, int curArmy, int newLoc1x, int newLoc1y, int newLoc2x, int newLoc2y) // добавляем приказ в очередь
             {
