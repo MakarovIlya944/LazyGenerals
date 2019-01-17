@@ -46,6 +46,19 @@ namespace LazyGeneral
 
         public int EndStage()
         {
+            for (int i = 0; i < game.maxArmy; i++)
+            {
+                if (game.Teams[i, 0].Location[0] == 9 && game.Teams[i, 0].Location[1] == 9)
+                {
+                    Server.SendInfo(0);
+                    return 0;
+                }
+                if (game.Teams[i, 1].Location[0] == 0 && game.Teams[i, 1].Location[1] == 0)
+                {
+                    Server.SendInfo(1);
+                    return 1;
+                }
+            }
             // Отправляю инфу об окончании игры
             if (game.ArmyCount[0] == 0)
                 if (game.ArmyCount[1] == 0)
