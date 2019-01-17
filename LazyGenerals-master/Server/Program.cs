@@ -218,9 +218,9 @@ namespace LazyServer
             Task.Run(() => AsyncRecieve1());
             //if (!quit2)
             Task.Run(() => AsyncRecieve2());
-            if (quit1)
+            if (quit[0])
                 while (!isRecieved[1]) ;
-            else if (quit2)
+            else if (quit[1])
                 while (!isRecieved[0]) ;
             else
                 while (!isRecieved[0] && !isRecieved[1]) ;

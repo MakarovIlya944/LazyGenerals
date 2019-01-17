@@ -128,13 +128,10 @@ namespace LazyGeneral
                                                 case -1:
                                                     Server.SendInfo(true, sideNum);
                                                     Server.quit[side] = true;
-                                                    localQuit = true;
-
                                                     break;
 
                                                 case -2:
                                                     Server.SendInfo(true, sideNum);
-                                                    localQuit = true;
                                                     break;
 
                                                 default:
@@ -174,9 +171,12 @@ namespace LazyGeneral
 
         public void Orders() // алерт, много говнокода
         {
-            int sideNum;
+            Task.Run(() => Checking(1));
+            Task.Run(() => Checking(0));
+            while (!Server.quit[0] || !Server.quit[1]) ;
             Server.SendInfo(true, 0);
             Server.SendInfo(true, 1);
+            int sideNum;
             int[,] armys = new int[maxArmy * 2, 3]; // armynum1, x1, y1    armynum1, x2, y2
             // Дважды получаю список приказов, от каждого клиента по одному
             for (int k = 0; k < 2; k++)
