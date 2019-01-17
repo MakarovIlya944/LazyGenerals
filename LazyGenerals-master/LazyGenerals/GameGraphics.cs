@@ -214,12 +214,38 @@ namespace LazyGeneral
         }
 
 
-    public void DrawConditionLine(int row)
+        public void DrawConditionLine(int row)
         {
             int _x = cellBorder + netBorder;
             int _y = cellBorder + netBorder + dy * row;
             int _dx = cellBorder + netBorder + dx * width;
             g.DrawLine(conditionPen, new Point(_x, _y), new Point(_dx, _y));
+        }
+
+        public Point[] GetStartedPosition(int team, int limit)
+        {
+            Point[] ans = new Point[5];
+            if (team == 1)
+            {
+                for (int i = 0, j = 0; i < 5 && j < limit; j++)
+                    for (int k = 1; i < 5 && k < width; k++)
+                        if (gameFiled[k][j] != cellType.water)
+                        {
+                            ans[i++].X = k;
+                            ans[i++].Y = j;
+                        }
+            }
+            else
+            {
+                for (int i = 0, j = limit-1; i < 5 && j > -1; j++)
+                    for (int k = 1; i < 5 && k < width - 1; k++)
+                        if (gameFiled[k][j] != cellType.water)
+                        {
+                            ans[i++].X = k;
+                            ans[i++].Y = j;
+                        }
+            }
+            return ans;
         }
     }
 }
