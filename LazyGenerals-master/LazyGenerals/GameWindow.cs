@@ -92,17 +92,24 @@ namespace LazyGeneral
             //int[] rect = new int[4];
             gamedrive.DrawBase(team);
             gamedrive.DrawBase(enemyteam);
-            gamedrive.DrawBattle(5, 5, 100, 1213);
             if (isInitPhase)
             {
                 for (int i = 0; i < armyCount; i++)
                 {
                     if (powers[i] > 0)
+                    {
                         //rect = gamedrive.DrawArmy(armies[i].X, armies[i].Y);
                         //pe.Graphics.DrawString(i.ToString(), new Font("Microsoft Sans Serif", 13), Brushes.Black, new Point(rect[0] + rect[2] / 2, rect[1]));
                         //pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
                         //gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
-                        gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
+                        int j = 0;
+                        for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
+
+                        if(j == armyCount)
+                            gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
+                        else
+                            gamedrive.DrawBattle(armies[i].X, armies[i].Y, powers[i], enemyPowers[j]);
+                    }
                 }
                 gamedrive.DrawConditionLine(team == 1 ? limitArea : h - limitArea);
             }
