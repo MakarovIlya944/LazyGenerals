@@ -141,6 +141,7 @@ namespace LazyGeneral
                                                     {
                                                         case true:
                                                             Server.SendInfo(true, sideNum);
+                                                            localQuit = true;
                                                             break;
 
                                                         case false:
