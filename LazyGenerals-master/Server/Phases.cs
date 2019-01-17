@@ -87,7 +87,7 @@ namespace LazyGeneral
             }
         }
 
-        public async void Checking(int side)
+        public void Checking(int side)
         {
             int armyNum;
             bool localQuit;

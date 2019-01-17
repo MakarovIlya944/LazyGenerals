@@ -97,13 +97,8 @@ namespace LazyGeneral
                         //pe.Graphics.DrawString(i.ToString(), new Font("Microsoft Sans Serif", 13), Brushes.Black, new Point(rect[0] + rect[2] / 2, rect[1]));
                         //pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
                         //gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
-                        int j = 0;
-                        for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
-
-                        if(j == armyCount)
-                            gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
-                        else
-                            gamedrive.DrawBattle(armies[i].X, armies[i].Y, powers[i], enemyPowers[j]);
+                        gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
+                        
                     }
                 }
                 gamedrive.DrawConditionLine(team == 1 ? limitArea : h - limitArea);
@@ -112,22 +107,30 @@ namespace LazyGeneral
             {
                 for (int i = 0; i < armyCount; i++)
                 {
+                    int j = 0;
                     if (powers[i] > 0)
                     {
-                        gamedrive.DrawArmy(team, curSteps[0][i].X, curSteps[0][i].Y, i + 1, powers[i], 1);
-                        if (curSteps[1][i].X != -1)
+                        for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
+
+                        if (j == armyCount)
                         {
-                            gamedrive.DrawPath(armyColorStep, curSteps[0][i], curSteps[1][i]);
-                            gamedrive.DrawArmy(team, curSteps[1][i].X, curSteps[1][i].Y, i + 1, powers[i], (float)0.5);
+                            gamedrive.DrawArmy(team, curSteps[0][i].X, curSteps[0][i].Y, i + 1, powers[i], 1);
+                            if (curSteps[1][i].X != -1)
+                            {
+                                gamedrive.DrawPath(armyColorStep, curSteps[0][i], curSteps[1][i]);
+                                gamedrive.DrawArmy(team, curSteps[1][i].X, curSteps[1][i].Y, i + 1, powers[i], (float)0.5);
+                            }
+                            if (curSteps[2][i].X != -1)
+                            {
+                                gamedrive.DrawPath(armyColorStep, curSteps[1][i], curSteps[2][i]);
+                                gamedrive.DrawArmy(team, curSteps[2][i].X, curSteps[2][i].Y, i + 1, powers[i], (float)0.5);
+                            }
                         }
-                        if (curSteps[2][i].X != -1)
-                        {
-                            gamedrive.DrawPath(armyColorStep, curSteps[1][i], curSteps[2][i]);
-                            gamedrive.DrawArmy(team, curSteps[2][i].X, curSteps[2][i].Y, i + 1, powers[i], (float)0.5);
-                        }
+                        else
+                            gamedrive.DrawBattle(armies[i].X, armies[i].Y, powers[i], enemyPowers[j]);
                     }
                     
-                    if(enemyPowers[i] > 0)
+                    if(enemyPowers[i] > 0 && j == armyCount)
                         gamedrive.DrawArmy(enemyteam, enemyArmies[i].X, enemyArmies[i].Y, i + 1, enemyPowers[i], 1);
                 }
             }
@@ -278,8 +281,8 @@ namespace LazyGeneral
                     if (curSteps[2][i].X == -1)
                         curSteps[2][i] = curSteps[1][i];
                 }
-                if (activeArmyNum != -1)
-                    client.SendXY(-2, team, -2, -2);
+                /*if (activeArmyNum != -1)
+                    client.SendXY(-2, team, -2, -2);*/
                 client.SendXY(-1, team, -1, -1);
                 client.RecieveIsCorrect();
                 client.SendOrder(team, order, curSteps);
