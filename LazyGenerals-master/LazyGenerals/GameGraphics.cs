@@ -131,7 +131,6 @@ namespace LazyGeneral
             int _dx = dx - cellBorder * 2 - armyReduce * 2;
             int _dy = dy - cellBorder * 2 - armyReduce * 2;
 
-
             if (team == 1)
             {
                 if (opt < 0.999)
@@ -146,6 +145,7 @@ namespace LazyGeneral
                 else
                     g.DrawImage(images[3], _x, _y, _dx, _dy);
             }
+            g.DrawString($"{num}  {Math.Round(power, 0)}", new Font("Microsoft Sans Serif", 8), Brushes.Black, new Point(_x + 2, _y + _dy - 15));
 
             return true;
         }
