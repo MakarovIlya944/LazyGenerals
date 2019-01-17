@@ -56,6 +56,8 @@ namespace LazyServer
                     Console.WriteLine("Ничья");
                     break;
             }
+            client1.Close();
+            client2.Close();
             Console.ReadLine();
         }
         //========================================================================================================================

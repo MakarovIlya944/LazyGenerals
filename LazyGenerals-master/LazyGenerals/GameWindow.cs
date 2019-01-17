@@ -98,7 +98,6 @@ namespace LazyGeneral
                         //pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
                         //gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
                         gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
-                        
                     }
                 }
                 gamedrive.DrawConditionLine(team == 1 ? limitArea : h - limitArea);
@@ -108,7 +107,7 @@ namespace LazyGeneral
                 for (int i = 0; i < armyCount; i++)
                 {
                     int j = 0;
-                    if (powers[i] > 0)
+                    if (powers[i] > 0.01)
                     {
                         for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
 
@@ -129,9 +128,14 @@ namespace LazyGeneral
                         else
                             gamedrive.DrawBattle(armies[i].X, armies[i].Y, powers[i], enemyPowers[j]);
                     }
-                    
-                    if(enemyPowers[i] > 0 && j == armyCount)
-                        gamedrive.DrawArmy(enemyteam, enemyArmies[i].X, enemyArmies[i].Y, i + 1, enemyPowers[i], 1);
+
+                    if (enemyPowers[i] > 0.01)
+                    {
+                        j = 0;
+                        for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
+                        if (j == armyCount)
+                            gamedrive.DrawArmy(enemyteam, enemyArmies[i].X, enemyArmies[i].Y, i + 1, enemyPowers[i], 1);
+                    }
                 }
             }
 		}
@@ -304,10 +308,22 @@ namespace LazyGeneral
                     curSteps[2][i].X = -1;
                     order[i] = -1;
                 }
+                labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
+            }
+            else
+            {
+                string message;
+                if ((isEnd == 1 && team == 2) || (isEnd == 0 && team == 1))
+                    message = "Вы победили!";
+                else if ((isEnd == 0 && team == 2) || (isEnd == 1 && team == 1))
+                    message = "Вы проиграли!";
+                else
+                    message = "Ничья!";
+                MessageBox.Show(message);
+                Close();
             }
             activeArmyNum = -1;
             activeLayer = -1;
-            labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
             pictureBox1.Invalidate();
         }
 
