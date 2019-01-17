@@ -87,7 +87,7 @@ namespace LazyGeneral
             }
         }
 
-        public void Checking(int side)
+        public async void Checking(int side)
         {
             int armyNum;
             bool localQuit;
@@ -172,9 +172,10 @@ namespace LazyGeneral
 
         public void Orders() // алерт, много говнокода
         {
-            Task.Run(() => Checking(1));
-            Task.Run(() => Checking(0));
-            while (!Server.quit[0] || !Server.quit[1]) ;
+            var a1 = Task.Factory.StartNew(() => Checking(1));
+            var a2 = Task.Factory.StartNew(() => Checking(0));
+            a1.Wait();
+            a2.Wait();
             Server.quit[0] = false;
             Server.quit[1] = false;
             Server.SendInfo(true, 0);
