@@ -74,7 +74,7 @@ namespace LazyGeneral
             for (int x = netBorder, ix = 0; ix < width; x += dx, ix++)
                 for (int y = netBorder, iy = 0; iy < height; y += dy, iy++)
                     //g.FillRectangle(gameFiled[ix][iy] == cellType.field ? Brushes.ForestGreen : Brushes.Aqua, x + cellBorder, y + cellBorder, dx - cellBorder * 2, dy - cellBorder * 2);
-                    g.DrawImage(gameFiled[ix][iy] == cellType.field ? images[4] : images[4], x + cellBorder, y + cellBorder, dx - cellBorder * 2, dy - cellBorder * 2);
+                    g.DrawImage(gameFiled[ix][iy] == cellType.field ? images[5] : images[4], x + cellBorder, y + cellBorder, dx - cellBorder * 2, dy - cellBorder * 2);
 
             return false;
 		}
