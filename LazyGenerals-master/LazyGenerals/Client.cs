@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
@@ -25,7 +26,18 @@ namespace LazyServer
             nwStream = client.GetStream();
         }
 
-        public ValueTuple<int, int[,]> RecieveInitField()
+        public void SendHello(int team)
+        {
+            _SendData(team.ToString());
+        }
+
+        public int RecieveEnd()
+        {
+            string data = _RecieveData();
+            return int.Parse(data);
+        }
+
+        public ValueTuple<int, int, int, int[,]> RecieveInitField()
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
@@ -42,56 +54,78 @@ namespace LazyServer
                     F[i, j] = int.Parse(tokens[index]);
                 }
             }
-            return (maxArmy, F);
+            return (n, m, maxArmy, F);
         }
 
-        public ValueTuple<int, int[,], double[]> RecievePlacement()
+        public ValueTuple<double[], int[], int[,], double[], int[], int[,]> RecievePlacement(int team)
         {
             string data = _RecieveData();
             string[] tokens = data.Split(new string[]
                 {" "}, StringSplitOptions.RemoveEmptyEntries);
-            int maxArmy = int.Parse(tokens[0]);
-            int n_army = int.Parse(tokens[1]);
-            int m_army = int.Parse(tokens[2]);
-            int[,] army = new int[n_army, m_army];
-            for (int i = 0; i < n_army; i++)
-            {
-                for (int j = 0; j < m_army; j++)
-                {
-                    int index = i * m_army + j + 3;
-                    army[i, j] = int.Parse(tokens[index]);
-                }
-            }
-            int shift_index = (n_army - 1) * m_army + n_army + 5;
-            int n_power = int.Parse(tokens[shift_index - 1]);
-            double[] power = new double[n_power];
-            for (int i = 0; i < n_power; i++)
-            { power[i] = double.Parse(tokens[shift_index + i]); }
-            return (maxArmy, army, power);
-        }
-
-        public void SendPlacement(int maxArmy, int[,] army, double[] power)
-        {
-            string data = maxArmy.ToString();
-            int n = army.GetLength(0);
-            int m = army.GetLength(1);
-            data += " " + n + " " + m;
+            int n = int.Parse(tokens[0]);
+            double[] power = new double[n];
+            int[,] locations = new int[n, 2];
+            int[] armyNums = new int[n];
+            double[] enemypower = new double[n];
+            int[,] enemylocations = new int[n, 2];
+            int[] enemyarmyNums = new int[n];
+            int ind = 1;
+            for (int i = 0; i < n; i++)
+                power[i] = double.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+                armyNums[i] = int.Parse(tokens[ind++]);
             for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < m; j++)
-                { data += " " + army[i, j]; }
+                locations[i, 0] = int.Parse(tokens[ind++]);
+                locations[i, 1] = int.Parse(tokens[ind++]);
             }
-            data += " " + power.Length;
+            n = int.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+                enemypower[i] = double.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+                enemyarmyNums[i] = int.Parse(tokens[ind++]);
+            for (int i = 0; i < n; i++)
+            {
+                enemylocations[i, 0] = int.Parse(tokens[ind++]);
+                enemylocations[i, 1] = int.Parse(tokens[ind++]);
+            }
+            if(team == 1)
+                return (power, armyNums, locations, enemypower, enemyarmyNums, enemylocations);
+            else
+                return (enemypower, enemyarmyNums, enemylocations, power, armyNums, locations);
+        }
+
+        public void SendInitPlacement(int team, double[] power, int[,] army)
+        {
+            string data = team.ToString();
+            int n = power.Length;
+            data += " " + n;
             for (int i = 0; i < power.Length; i++)
-            { data += " " + power[i].ToString(); }
+                data += " " + power[i];
+            for (int i = 0; i < n; i++)
+                data += $" {army[i, 0]} {army[i, 1]}";
             _SendData(data);
         }
 
-        public void SendXY(int team, int id, int x, int y)
+        public void SendOrder(int team, int[] orders, Point[][] armies)
         {
-            string data = team.ToString() +
+            string data = team.ToString();
+            int n = orders.Length;
+            data += " " + n;
+            for(int i=0;i<n;i++)
+            {
+                data += $" {orders[i]} {armies[1][orders[i]].X} {armies[1][orders[i]].Y}";
+                data += $" 0 {armies[2][orders[i]].X} {armies[2][orders[i]].Y}";
+            }
+            _SendData(data);
+        }
+
+        public bool SendXY(int team, int id, int x, int y)
+        {
+            string data = team +
                 " " + id + " " + x + " " + y;
             _SendData(data);
+            return RecieveIsCorrect();
         }
 
         public bool RecieveIsCorrect()
@@ -99,20 +133,6 @@ namespace LazyServer
             string data = _RecieveData();
             bool isCorrect = bool.Parse(data);
             return isCorrect;
-        }
-
-        public void SendArmy(int maxArmy, int[,] army)
-        {
-            string data = maxArmy.ToString();
-            int n = army.GetLength(0);
-            int m = army.GetLength(1);
-            data += " " + n + " " + m;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < m; j++)
-                { data += " " + army[i, j]; }
-            }
-            _SendData(data);
         }
 
         private string _RecieveData()

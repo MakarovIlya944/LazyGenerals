@@ -8,69 +8,52 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LazyServer;
+using System.Net;
 
 namespace LazyGeneral
 {
 	public partial class MainWindow : Form
 	{
-		public MainWindow()
+        public MainWindow()
 		{
 			InitializeComponent();
-		}
-        
-		private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
-		{
-			Graphics g = pe.Graphics;
-			System.Drawing.Pen myPen;
-			myPen = new System.Drawing.Pen(System.Drawing.Color.Tomato);
-			g.DrawEllipse(myPen, 30, 150, 20, 50);
-		}
+        }
 
         private void buttonStartGame_Click(object sender, EventArgs e)
         {
-            //create server instance
-            Server server = new Server("127.0.0.1", 5000);
-            //create game window
-            GameWindow g = new GameWindow(server);
-            //create core logic
-            //send init field to client
-            //recieve client start placement
-            //while not end
-            //  make armies moves
-            //  recieve client armies moves
-            //  calc battles core logic
-            //  send to client field state
-
+            string Host = Dns.GetHostName();
+            string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
+            Client c = new Client(IP, 5000);
+            //Client c = new Client("25.22.159.103", 5000);
+            c.RecieveIsCorrect();
+            GameWindow g = new GameWindow(c, 1);
             g.Show();
             Hide();
         }
 
         private void buttonConnectGame_Click(object sender, EventArgs e)
         {
-            //create client instance
-            Client client = new Client("127.0.0.1", 5000);
-            //create game window
-            GameWindow g = new GameWindow(client);
-            //recieve init field from server
-            //send to server start placement
-            //while true
-            //  recieve field state
-            //  if is end: return 
-            //  make armies moves
-            //  send to server armies moves
+            //string Host = Dns.GetHostName();
+            //string IP = Dns.GetHostByName(Host).AddressList[0].ToString();
+            //Client c = new Client(IP, 5001);
+            label1.Visible = true;
+            textBox1.Visible = true;
+            panel1.Visible = true;
+            button1.Visible = true;
+        }
 
+        private void buttonExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Client c = new Client(textBox1.Text, 5001);
+            c.RecieveIsCorrect();
+            GameWindow g = new GameWindow(c, 2);
             g.Show();
             Hide();
-        }
-
-        private void groupBoxConnection_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

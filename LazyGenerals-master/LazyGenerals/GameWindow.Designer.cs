@@ -52,6 +52,9 @@
             this.labelA3 = new System.Windows.Forms.Label();
             this.labelA2 = new System.Windows.Forms.Label();
             this.labelA1 = new System.Windows.Forms.Label();
+            this.buttonAction = new System.Windows.Forms.Button();
+            this.labelCurPhase = new System.Windows.Forms.Label();
+            this.labelPhase = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gameInitGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarA5)).BeginInit();
@@ -65,14 +68,14 @@
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.OliveDrab;
             this.pictureBox1.Enabled = false;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(0, 1);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(800, 450);
+            this.pictureBox1.Size = new System.Drawing.Size(800, 800);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Visible = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             // 
             // gameInitGroup
             // 
@@ -104,7 +107,6 @@
             this.gameInitGroup.TabIndex = 1;
             this.gameInitGroup.TabStop = false;
             this.gameInitGroup.Text = "Баланс армии";
-            this.gameInitGroup.Enter += new System.EventHandler(this.gameInitGroup_Enter);
             // 
             // buttonAReady
             // 
@@ -330,12 +332,50 @@
             this.labelA1.TabIndex = 0;
             this.labelA1.Text = "Мощь первой армии";
             // 
+            // buttonAction
+            // 
+            this.buttonAction.Enabled = false;
+            this.buttonAction.Location = new System.Drawing.Point(713, 416);
+            this.buttonAction.Name = "buttonAction";
+            this.buttonAction.Size = new System.Drawing.Size(75, 23);
+            this.buttonAction.TabIndex = 2;
+            this.buttonAction.Text = "Готово";
+            this.buttonAction.UseVisualStyleBackColor = true;
+            this.buttonAction.Visible = false;
+            this.buttonAction.Click += new System.EventHandler(this.buttonAction_Click);
+            // 
+            // labelCurPhase
+            // 
+            this.labelCurPhase.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.labelCurPhase.AutoSize = true;
+            this.labelCurPhase.BackColor = System.Drawing.SystemColors.Control;
+            this.labelCurPhase.Location = new System.Drawing.Point(667, 3);
+            this.labelCurPhase.Name = "labelCurPhase";
+            this.labelCurPhase.Size = new System.Drawing.Size(79, 13);
+            this.labelCurPhase.TabIndex = 0;
+            this.labelCurPhase.Text = "Баланс армии";
+            this.labelCurPhase.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelPhase
+            // 
+            this.labelPhase.AutoSize = true;
+            this.labelPhase.BackColor = System.Drawing.SystemColors.Control;
+            this.labelPhase.Location = new System.Drawing.Point(580, 3);
+            this.labelPhase.Name = "labelPhase";
+            this.labelPhase.Size = new System.Drawing.Size(81, 13);
+            this.labelPhase.TabIndex = 0;
+            this.labelPhase.Text = "Текущая фаза";
+            this.labelPhase.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 451);
+            this.ClientSize = new System.Drawing.Size(800, 801);
+            this.Controls.Add(this.buttonAction);
             this.Controls.Add(this.gameInitGroup);
+            this.Controls.Add(this.labelPhase);
+            this.Controls.Add(this.labelCurPhase);
             this.Controls.Add(this.pictureBox1);
             this.Name = "GameWindow";
             this.Text = "GameWindow";
@@ -349,6 +389,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarA2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarA1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
@@ -378,5 +419,8 @@
         private System.Windows.Forms.Label labelA3;
         private System.Windows.Forms.Label labelA2;
         private System.Windows.Forms.Label labelA1;
+        private System.Windows.Forms.Button buttonAction;
+        private System.Windows.Forms.Label labelCurPhase;
+        private System.Windows.Forms.Label labelPhase;
     }
 }

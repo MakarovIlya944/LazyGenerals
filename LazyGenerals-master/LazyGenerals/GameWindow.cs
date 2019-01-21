@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LazyServer;
 
@@ -14,153 +9,215 @@ namespace LazyGeneral
 	public partial class GameWindow : Form
 	{
 		private GameGraphics gamedrive = new GameGraphics();
-        private bool isLight = false;
+        private Color armyColorDefault, armyColorSelected, armyColorStep;
+        private Color enemyArmyColorDefault, enemyArmyColorSelected, enemyArmyColorStep;
         private double maxOneArmy = 50.0, maxAllArmy = 100.0;
-        private readonly bool isServer;
-        private Server server;
+        private int w, h;
         private Client client;
-        private Stages stages;
-        private bool isEnd;
+        private bool isInitPhase = true;
+        private int team;
+        private double[] powers, enemyPowers;
+        private Point[] armies, enemyArmies;
+        private int[] order;
+        private int activeArmyNum = -1;
+        private int activeLayer = -1;
+        private int approvedOrders = 0;
+        private Point[][] curSteps = new Point[3][];
+        private int curStep = 0;
+        private const int armyCount = 5;
+        private const int limitArea = 3;
+        private int isEnd = 3;
 
-        public GameWindow(Server server)
-        {
-            InitializeComponent();
-            this.server = server;
-            this.client = null;
-            this.isServer = true;
-            this.isEnd = false;
-            gamedrive.Init(this.pictureBox1.Width, this.pictureBox1.Height);
-
-            //create core logic
-            //нужно чтобы стагес в конструкторе принимал Server и Client
-            stages = new Stages();
-            stages.StartStage();
-            //send init field to client
-            server.SendInitField();
-        }
-
-        public GameWindow(Client client)
+        public GameWindow(Client client, int t)
 		{
-			InitializeComponent();
-            this.server = null;
-            this.client = client;
-            this.isServer = false;
-            this.isEnd = false;
-            gamedrive.Init(this.pictureBox1.Width, this.pictureBox1.Height);
-
-            stages = null;
-            //recieve init field from server
-            client.RecieveInitField();
-        }
-
-        private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs pe)
-		{
-			gamedrive.g = pe.Graphics;
-			gamedrive.PaintBattleField();
-			gamedrive.DrawArmy(0, 2, 3);
-			gamedrive.DrawArmy(1, 4, 4);
-		}
-
-		private void pictureBox1_Click(object sender, EventArgs e)
-		{
-            //if click select
-            //если нажато на армию, чтобы ее выбрать(а не походить)
-                //запоминаем какая армия выбрана
-                //return
-			isLight = true;
-			Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
-            //MessageBox.Show($"X:{pos.X} Y:{pos.Y}");
-
-            //if first palcement not ended
-            //если расстановка армий не завершена 
-            //{
-            //accumulate placement
-            //накопить (запомнить) стартовое расположние армий
-            //}
-            //else
-            //{
-            //if i here first time now
-            //когда расстановка завершена отправляем данные
-            //{
-            //if (isServer)
-            //{
-            //    //recieve client start placement
-                  // если сервер, то получаем данные
-            //    server.RecievePlacement();
-            //}
-            //else
-            //{
-            //    //send to server start placement
-                  // если клиент, то отправляем
-            //    client.SendPlacement();
-            //}
-            //}
-            if (isServer)
+            armyColorDefault = t == 1 ? Color.DarkRed : Color.ForestGreen;
+            armyColorSelected = t == 1 ? Color.Crimson : Color.LimeGreen;
+            armyColorStep = t == 1 ? Color.Firebrick : Color.Green;
+            enemyArmyColorDefault = t != 1 ? Color.DarkRed : Color.ForestGreen;
+            enemyArmyColorSelected = t != 1 ? Color.Crimson : Color.LimeGreen;
+            enemyArmyColorStep = t != 1 ? Color.Firebrick : Color.Green;
+            for (int i = 0; i < 3; i++)
             {
-                if (isEnd) return;
-                //if need server move
-                // если сервер не отходил все свои ходы 
-                //{
-                    //move army
-                    // происходит циклическая стадия
-                    // запоминаем ходы(какая армия куда походила)  
-                    // в stages должно быть учтено какая армия куда ходит
-                    //return;
-                //}
-                //if all moves done
-                // если сервер отходил 
-                //{
-                    //while need get client move
-                    //{
-                        //recieve client armies moves
-                        // сервер получает все ходы клиента
-                        server.RecieveArmy();
-                //}
-                //}
+                curSteps[i] = new Point[armyCount];
+                for (int j = 0; j < armyCount; j++)
+                    curSteps[i][j] = new Point(-1, -1);
+            }
+            order = new int[armyCount];
+            powers = new double[armyCount];
+            enemyPowers = new double[armyCount];
+            armies = new Point[armyCount];
+            enemyArmies = new Point[armyCount];
+            team = t;
+			InitializeComponent();
+            this.client = client;
+            int[,] F;
+            int max;
+            //w = 10;
+            //h = 10;
+            //max = 15000;
+            //F = new int[10, 10] { { 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1},
+            //{ 1,1,1,1,1,1,1,1,1,1}};
+            (w,h,max,F) = client.RecieveInitField();
+            maxAllArmy = max;
+            maxOneArmy = max * 0.75;
+            labelAmaxnum.Text = maxAllArmy.ToString();
+            labelAmaxonenum.Text = maxOneArmy.ToString();
+            labelA1num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA2num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA3num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA4num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            labelA5num.Text = Math.Round((1 * maxOneArmy) / 100.0).ToString();
+            gamedrive.Init(pictureBox1.Width, pictureBox1.Height, w, h, F);
+            Text = team == 1 ? "Хост: Красные" : "Клиент: Синие";
+        }
 
-                //calc battles core logic
-                // обработка полного хода
-                //stages.CyclicStage();
-                isEnd = stages.EndStage() == 3;
-                if (!isEnd)
+        private void pictureBox1_Paint(object sender, PaintEventArgs pe)
+		{
+            int enemyteam = team == 1 ? 2 : 1;
+            gamedrive.g = pe.Graphics;
+            gamedrive.PaintBattleField();
+            //int[] rect = new int[4];
+            gamedrive.DrawBase(team);
+            gamedrive.DrawBase(enemyteam);
+            if (isInitPhase)
+            {
+                for (int i = 0; i < armyCount; i++)
                 {
-                    //send to client NOT_END
-                    server.SendIsCorrect(false);
-                    //send to client field state
-                    server.SendPlacement();
+                    if (powers[i] > 0)
+                    {
+                        //rect = gamedrive.DrawArmy(armies[i].X, armies[i].Y);
+                        //pe.Graphics.DrawString(i.ToString(), new Font("Microsoft Sans Serif", 13), Brushes.Black, new Point(rect[0] + rect[2] / 2, rect[1]));
+                        //pe.Graphics.DrawRectangle(new Pen(i != activeArmyNum ? armyColorDefault : armyColorSelected, 4), rect[0], rect[1], rect[2], rect[3]);
+                        //gamedrive.DrawArmy(i != activeArmyNum ? armyColorDefault : armyColorSelected, armies[i].X, armies[i].Y, i + 1, powers[i]);
+                        gamedrive.DrawArmy(team, armies[i].X, armies[i].Y, i + 1, powers[i], 1);
+                    }
                 }
-                else
+                gamedrive.DrawConditionLine(team == 1 ? limitArea : h - limitArea);
+            }
+            else
+            {
+                for (int i = 0; i < armyCount; i++)
                 {
-                    //send to client END
-                    server.SendIsCorrect(true);
-                    //send to client WINNER
+                    int j = 0;
+                    if (powers[i] > 0.01)
+                    {
+                        for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
+
+                        if (j == armyCount)
+                        {
+                            gamedrive.DrawArmy(team, curSteps[0][i].X, curSteps[0][i].Y, i + 1, powers[i], 1);
+                            if (curSteps[1][i].X != -1)
+                            {
+                                gamedrive.DrawPath(armyColorStep, curSteps[0][i], curSteps[1][i]);
+                                gamedrive.DrawArmy(team, curSteps[1][i].X, curSteps[1][i].Y, i + 1, powers[i], (float)0.5);
+                            }
+                            if (curSteps[2][i].X != -1)
+                            {
+                                gamedrive.DrawPath(armyColorStep, curSteps[1][i], curSteps[2][i]);
+                                gamedrive.DrawArmy(team, curSteps[2][i].X, curSteps[2][i].Y, i + 1, powers[i], (float)0.5);
+                            }
+                        }
+                        else
+                            gamedrive.DrawBattle(armies[i].X, armies[i].Y, powers[i], enemyPowers[j]);
+                    }
+
+                    if (enemyPowers[i] > 0.01)
+                    {
+                        j = 0;
+                        for (; j < armyCount && armies[i] != enemyArmies[j]; j++) ;
+                        if (j == armyCount)
+                            gamedrive.DrawArmy(enemyteam, enemyArmies[i].X, enemyArmies[i].Y, i + 1, enemyPowers[i], 1);
+                    }
                 }
             }
-            else // код клиента
+		}
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
             {
-                if (isEnd) return;
-                //if NOT all moves done
-                //{
-                    //send to server army move
-                    client.SendArmy(/*?*/, new int[]
-                    { pos.X, pos.Y });
-                //}
-                //else
-                //{
-                    //recieve from server IS_END
-                    isEnd = client.RecieveIsCorrect();
-                    if (!isEnd)
+                Point pos = gamedrive.ClickCell(pictureBox1.PointToClient(MousePosition));
+                if (pos.X != -1)
+                    if (isInitPhase)
                     {
-                        //recieve from server field state
-                        client.RecievePlacement();
+                        //bool exists = armies.Exists(x => x == pos);
+                        bool exists = armies.Any(x => x == pos);
+                        if (activeArmyNum != -1 && !exists && (team == 1 ? pos.Y : h - 1 - pos.Y) < limitArea)
+                        {
+                            if (team == 1)
+                            {
+                                if (pos != new Point(0, 0))
+                                {
+                                    armies[activeArmyNum] = pos;
+                                    activeArmyNum = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (pos != new Point(h - 1, h - 1))
+                                {
+                                    armies[activeArmyNum] = pos;
+                                    activeArmyNum = -1;
+                                }
+                            }
+
+                        }
+                        else if (activeArmyNum == -1 && exists)
+                        {
+                            activeArmyNum = 0;
+                            for (; activeArmyNum < armyCount && armies[activeArmyNum] != pos; activeArmyNum++) ;
+                        }
                     }
                     else
                     {
-                        //recieve from server WINNER
-                        //display WINNER
+                        int layer = -1;
+                        if (curSteps[0].Any(x => x == pos))
+                            layer = 0;
+                        else if (curSteps[1].Any(x => x == pos))
+                            layer = 1;
+                        else if (curSteps[2].Any(x => x == pos))
+                            layer = 2;
+                        if (activeArmyNum == -1 && layer != -1)
+                        {
+                            activeArmyNum = 0;
+                            for (; activeArmyNum < armyCount && curSteps[layer][activeArmyNum] != pos; activeArmyNum++) ;
+                            activeLayer = layer;
+                        }
+                        else if (activeArmyNum != -1 && layer == -1 && activeLayer < 2)
+                        {
+                            if (client.SendXY(activeArmyNum, team, pos.X, pos.Y) && !curSteps[activeLayer].Any(x => x == pos))
+                            {
+                                if (activeLayer == 0 && !order.Any(x => x == activeArmyNum))
+                                {
+                                    order[approvedOrders] = activeArmyNum;
+                                    approvedOrders++;
+                                }
+                                activeLayer++;
+                                curSteps[activeLayer][activeArmyNum] = pos;
+                            }
+                        }
+                        if (activeLayer == 2)
+                        {
+                            activeArmyNum = -1;
+                            activeLayer = -1;
+                        }
                     }
             }
-            //}
+            else
+            {
+                activeArmyNum = -1;
+                activeLayer = -1;
+                client.SendXY(-2, team, -2, -2);
+            }
+            pictureBox1.Invalidate();
         }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -198,9 +255,76 @@ namespace LazyGeneral
             labelAcurnum.Text = Math.Round((trackBarA1.Value + trackBarA2.Value + trackBarA3.Value + trackBarA4.Value + trackBarA5.Value) * maxOneArmy / 100.0).ToString();
         }
 
-        private void gameInitGroup_Enter(object sender, EventArgs e)
+        private void buttonAction_Click(object sender, EventArgs e)
         {
-
+            int[,] position = new int[armyCount, 2];
+            int[,] enemyPosition = new int[armyCount, 2];
+            if (isInitPhase)
+            {
+                isInitPhase = false;
+                for (int i = 0; i < armyCount; i++)
+                {
+                    position[i, 0] = armies[i].X;
+                    position[i, 1] = armies[i].Y;
+                }
+                client.SendInitPlacement(team, powers, position);
+                for (int i = 0; i < armyCount; i++)
+                    curSteps[0][i] = armies[i];
+                
+            }
+            else
+            {
+                if (approvedOrders != armyCount)
+                    for (int i = 0; i < armyCount; i++)
+                        if (!order.Any(x => x == i))
+                            order[approvedOrders++] = i;
+                for (int i = 0; i < armyCount; i++)
+                {
+                    if (curSteps[1][i].X == -1)
+                        curSteps[1][i] = curSteps[0][i];
+                    if (curSteps[2][i].X == -1)
+                        curSteps[2][i] = curSteps[1][i];
+                }
+                /*if (activeArmyNum != -1)
+                    client.SendXY(-2, team, -2, -2);*/
+                client.SendXY(-1, team, -1, -1);
+                client.RecieveIsCorrect();
+                client.SendOrder(team, order, curSteps);
+                isEnd = client.RecieveEnd();
+                curStep++;
+                approvedOrders = 0;
+            }
+            if (isEnd == 3)
+            {
+                (powers, order, position, enemyPowers, order, enemyPosition) = client.RecievePlacement(team);
+                for (int i = 0; i < armyCount; i++)
+                {
+                    armies[i].X = position[i, 0];
+                    armies[i].Y = position[i, 1];
+                    enemyArmies[i].X = enemyPosition[i, 0];
+                    enemyArmies[i].Y = enemyPosition[i, 1];
+                    curSteps[0][i] = armies[i];
+                    curSteps[1][i].X = -1;
+                    curSteps[2][i].X = -1;
+                    order[i] = -1;
+                }
+                labelCurPhase.Text = "Выдача приказов| #" + curStep.ToString();
+            }
+            else
+            {
+                string message;
+                if ((isEnd == 1 && team == 2) || (isEnd == 0 && team == 1))
+                    message = "Вы победили!";
+                else if ((isEnd == 0 && team == 2) || (isEnd == 1 && team == 1))
+                    message = "Вы проиграли!";
+                else
+                    message = "Ничья!";
+                MessageBox.Show(message);
+                Close();
+            }
+            activeArmyNum = -1;
+            activeLayer = -1;
+            pictureBox1.Invalidate();
         }
 
         private void buttonAReady_Click(object sender, EventArgs e)
@@ -211,11 +335,32 @@ namespace LazyGeneral
                 MessageBox.Show("Слишком большие армии!");
                 return;
             }
+
+            powers[0] = trackBarA1.Value * maxOneArmy / 100.0;
+            powers[1] = trackBarA2.Value * maxOneArmy / 100.0;
+            powers[2] = trackBarA3.Value * maxOneArmy / 100.0;
+            powers[3] = trackBarA4.Value * maxOneArmy / 100.0;
+            powers[4] = trackBarA5.Value * maxOneArmy / 100.0;
+
+            int _h = team == 1 ? 0 : h - 1;
+            armies[0] = new Point(1, _h);
+            armies[1] = new Point(2, _h);
+            armies[2] = new Point(3, _h);
+            armies[3] = new Point(4, _h);
+            armies[4] = new Point(5, _h);
+
             //включить другой режим
             pictureBox1.Visible = true;
             pictureBox1.Enabled = true;
             gameInitGroup.Enabled = false;
             gameInitGroup.Visible = false;
+
+            buttonAction.Visible = true;
+            buttonAction.Enabled = true;
+            labelCurPhase.Text = "Расстановка армий";
+            pictureBox1.Invalidate();
+            labelCurPhase.BackColor = Color.OliveDrab;
+            labelPhase.BackColor = Color.OliveDrab;
         }
     }
 }
