@@ -28,20 +28,20 @@ namespace LazyGeneral
             // Получаю команду, силы армий, их номера, их локации
             for (int j = 0; j < 2; j++)
             {
-                (side, powerInfo, numberInfo, locationInfo)  = GetInfo();
+                (side, powerInfo, numberInfo, locationInfo) = GetInfo();
                 for (int i = 0; i < armyCount; i++)
-                    A[numberInfo[i], side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]);;
+                    A[numberInfo[i], side] = new Army(powerInfo[i], locationInfo[i, 0], locationInfo[i, 1], side, numberInfo[i]); ;
             }
             game = new Phases(A, armyCount, poi);
         }
 
         public void CyclicStage()
         {
-                game.Scouting();
-                game.Orders();
-                game.Move();
-                game.Attack();
-                game.Losses();
+            game.Scouting();
+            game.Orders();
+            game.Move();
+            game.Attack();
+            game.Losses();
         }
 
         public int EndStage()
