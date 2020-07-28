@@ -30,14 +30,14 @@ namespace LazyGeneralsServer
             services.AddLogging();
             services.AddSwaggerGen();
 
-                services.AddSingleton<RedisJobFetchingService>();
-                services.AddSingleton<IJobFetchingService<IProcessingData>, RedisJobFetchingService>
-                    (sp => sp.GetRequiredService<RedisJobFetchingService>());
-                services.AddSingleton<IStoppableService, RedisJobFetchingService>
-                    (sp => sp.GetRequiredService<RedisJobFetchingService>());
+            //    services.AddSingleton<RedisJobFetchingService>();
+            //    services.AddSingleton<IJobFetchingService<IProcessingData>, RedisJobFetchingService>
+            //        (sp => sp.GetRequiredService<RedisJobFetchingService>());
+            //    services.AddSingleton<IStoppableService, RedisJobFetchingService>
+            //        (sp => sp.GetRequiredService<RedisJobFetchingService>());
 
-            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetValue<string>("REDIS_URI")));
-            services.AddSingleton<IRedisQueues, RedisQueues>();
+            //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(Configuration.GetValue<string>("REDIS_URI")));
+            //services.AddSingleton<IRedisQueues, RedisQueues>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

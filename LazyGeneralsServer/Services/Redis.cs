@@ -36,15 +36,9 @@ namespace LazyGeneralsServer.Services
             _redisConnection = redisConnection;
         }
 
-        public Lobby GetLobby(string name)
-        {
-            var db = _redisConnection.GetDatabase();
-
-            db.StringGet("");
-            db.ListRange
-
-            Database db = redis.GetDatabase();
-        }
+        //public Lobby GetLobby(string name)
+        //{
+        //}
 
         public void SetLobby(Lobby l)
         {
