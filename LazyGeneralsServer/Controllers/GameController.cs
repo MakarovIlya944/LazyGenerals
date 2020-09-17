@@ -10,35 +10,35 @@ namespace LazyGeneralsServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LobbyController : ControllerBase
+    public class GameController : ControllerBase
     {
-        // GET: api/<LobbyController>
+        // GET: api/<GameController>
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<LobbyController>/5
+        // GET api/<GameController>/5
         [HttpGet("{name}")]
         public string Get(string name)
         {
             return "value";
         }
 
-        // POST api/<LobbyController>
+        // POST api/<GameController>
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<LobbyController>/5
+        // PUT api/<GameController>/5
         [HttpPut("{name}")]
         public void CreateLobby(int name, [FromBody] string pass = "")
         {
         }
 
-        // DELETE api/<LobbyController>/5
+        // DELETE api/<GameController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

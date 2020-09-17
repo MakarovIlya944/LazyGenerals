@@ -20,10 +20,19 @@
     "LazyGeneralsServer": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5000",
+      "MongoDBOptions": {
+        "ConnectionString": "localhost",
+        "Port": "27017",
+        "Password": "weee",
+        "Username": "master",
+        "DatabaseName": "lazy",
+        "AuthMechanism":"SCRAM-SHA-1"
+      },
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+
       }
     }
   }
