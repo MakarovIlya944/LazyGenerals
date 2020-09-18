@@ -67,5 +67,10 @@ namespace LazyGeneralsServer.Models
             client.Password = "***";
             return client;
         }
+
+        public Task<List<Game>> GetAllGames()
+        {
+            return database.GetCollection<Game>("Game").Find(_ => true).ToListAsync();
+        }
     }
 }

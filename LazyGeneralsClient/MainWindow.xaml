@@ -11,7 +11,19 @@
     </Window.Background>
 
     <Grid>
-        <Button Content="Начать игру" Name="StartButton" HorizontalAlignment="Center" Margin="0,111,0,0" VerticalAlignment="Top" Height="40" Width="120" Click="StartButton_Click"/>
-        <Button x:Name="ExitButton" Content="Выйти" HorizontalAlignment="Center" Margin="0,290,0,0" VerticalAlignment="Top" Height="40" Width="120" Click="ExitButton_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Button Content="Начать игру" Grid.Column="1" Grid.Row="1" x:Name="StartButton" HorizontalAlignment="Center" Margin="0,42,0,0" VerticalAlignment="Top" Height="40" Width="120" Click="StartButton_Click"/>
+        <Button x:Name="ExitButton" Grid.Column="1" Grid.Row="1" Content="Выйти" HorizontalAlignment="Center" Margin="0,192,0,0" VerticalAlignment="Top" Height="40" Width="120" Click="ExitButton_Click"/>
+        <Frame x:Name="Lobby" Source="LobbyWindow.xaml" Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="3" Grid.RowSpan="3" Visibility="Hidden"/>
     </Grid>
 </Window>

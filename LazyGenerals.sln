@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LazyGeneralsServer", "LazyGeneralsServer\LazyGeneralsServer.csproj", "{0845943A-7A2A-4CA3-89E3-B8AEC0152376}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyGeneralsClient", "LazyGeneralsClient\LazyGeneralsClient.csproj", "{DE83DDF9-E526-4F58-930D-71293AEC74A9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0845943A-7A2A-4CA3-89E3-B8AEC0152376} = {0845943A-7A2A-4CA3-89E3-B8AEC0152376}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

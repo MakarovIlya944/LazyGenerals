@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LazyGeneralsServer.Models;
+using LazyGeneralsServer.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LazyGeneralsServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/game")]
     [ApiController]
     public class GameController : ControllerBase
     {
+        private readonly IServerContext _context;
+
+        public GameController(IServerContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/<GameController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<List<Game>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _context.GetAllClients();
         }
 
         // GET api/<GameController>/5

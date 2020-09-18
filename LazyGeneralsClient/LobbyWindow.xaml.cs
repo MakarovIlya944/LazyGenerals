@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -21,6 +22,13 @@ namespace LazyGeneralsClient
         public LobbyWindow()
         {
             InitializeComponent();
+        }
+
+        private void GetLobbyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() => Broker.UpdateLobby());
+            int f = 1;
+            f += 1;
         }
     }
 }

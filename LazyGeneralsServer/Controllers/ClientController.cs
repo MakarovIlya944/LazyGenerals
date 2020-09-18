@@ -8,7 +8,7 @@ using LazyGeneralsServer.Models.Entities;
 
 namespace LazyGeneralsServer.Controllers
 {
-    [Route("api/clients")]
+    [Route("api/client")]
     [ApiController]
     public class ClientController : ControllerBase
     {
