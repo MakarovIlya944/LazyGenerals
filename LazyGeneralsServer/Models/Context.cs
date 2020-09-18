@@ -5,17 +5,23 @@ using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LazyGeneralsServer.Models
 {
     public interface IServerContext
     {
-        Task<List<Client>> GetAllClients();
+        IEnumerable<Client> GetAllClients();
         Task<Client> GetClient(string name);
+        Client CreateClient(string username, string pass);
         ReplaceOneResult ChangePassword(string username, string newPass);
         DeleteResult DeleteClient(string username);
-        Client CreateClient(string username, string pass);
+
+        IEnumerable<Game> GetAllGames();
+        Task<Game> GetGame(string name);
+        Game CreateGame(string name, string pass, Client host, string gameStaff);
+        DeleteResult DeleteGame(string name);
     }
 
     public class ServerContext : IServerContext
@@ -40,9 +46,11 @@ namespace LazyGeneralsServer.Models
             gridFS = new GridFSBucket(database);
         }
 
-        public Task<List<Client>> GetAllClients()
+        public IEnumerable<Client> GetAllClients()
         {
-            return database.GetCollection<Client>("Client").Find(_ => true).ToListAsync();
+            var clients = database.GetCollection<Client>("Client").Find(_ => true).ToList();
+            clients.ForEach(x => x.Password = x.Password == "" ? "" : "***");
+            return clients;
         }
 
         public Task<Client> GetClient(string username)
@@ -62,15 +70,39 @@ namespace LazyGeneralsServer.Models
 
         public Client CreateClient(string username, string pass)
         {
+            // TODO add check exist
             database.GetCollection<Client>("Client").InsertOne(new Client() { Name = username, Password = pass, Ready = false });
             var client = database.GetCollection<Client>("Client").Find(c => c.Name == username).FirstOrDefault();
             client.Password = "***";
             return client;
         }
 
-        public Task<List<Game>> GetAllGames()
+        public IEnumerable<Game> GetAllGames()
         {
-            return database.GetCollection<Game>("Game").Find(_ => true).ToListAsync();
+            var games = database.GetCollection<Game>("Game").Find(_ => true).ToList();
+            games.ForEach(x => x.Password = x.Password == "" ? "" : "***");
+            return games;
+        }
+
+        public Task<Game> GetGame(string name)
+        {
+            return database.GetCollection<Game>("Game").Find(c => c.Name == name).FirstOrDefaultAsync();
+        }
+
+        public Game CreateGame(string name, string pass, Client host, string gameStaff)
+        {
+            // TODO add check exist
+            database.GetCollection<Game>("Game").InsertOne(new Game() {
+                Name = name, Password = pass, Host = host, GameStaff = gameStaff, Clients = new List<Client>() 
+            });
+            var game = database.GetCollection<Game>("Game").Find(c => c.Name == name).FirstOrDefault();
+            game.Password = "***";
+            return game;
+        }
+
+        public DeleteResult DeleteGame(string name)
+        {
+            return database.GetCollection<Game>("Game").DeleteOne(c => c.Name == name);
         }
     }
 }

@@ -13,20 +13,22 @@ namespace LazyGeneralsServer.Models.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        [Required]
         [Display(Name = "Имя")]
-        public string Name;
+        public string Name { get; set; }
         [Display(Name = "Пароль")]
-        public string Password;
+        public string Password { get; set; }
+        [Required]
         [Display(Name = "Хост")]
-        public Client Host;
+        public Client Host { get; set; }
         [Display(Name = "Клиенты")]
-        public List<Client> Clients;
+        public List<Client> Clients { get; set; }
         [Display(Name = "Описание игры")]
-        public string GameStaff;
+        public string GameStaff { get; set; }
 
-        //public override string ToString()
-        //{
-        //    return (IsPrivate ? "Private" : "Public") +  $" {Name}\tClient:{Client}\t" + (IsPlaying ? "open" : "closed");
-        //}
+        public override string ToString()
+        {
+            return $"{Name}: {Host}" + Password == "" ? "" : " need pass";
+        }
     }
 }

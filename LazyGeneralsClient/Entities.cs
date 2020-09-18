@@ -7,11 +7,11 @@ namespace LazyGeneralsClient
     public class Game
     {
         public string Id { get; set; }
-        public string Name;
-        public string Password;
-        public Client Host;
-        public List<Client> Clients;
-        public string GameStaff;
+        public string Name { get; set; }
+        public string Password { get; set; }
+        public Client Host { get; set; }
+        public List<Client> Clients { get; set; }
+        public string GameStaff { get; set; }
     }
 
     public class Client

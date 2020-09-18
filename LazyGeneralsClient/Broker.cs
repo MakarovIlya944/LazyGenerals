@@ -21,6 +21,7 @@ namespace LazyGeneralsClient
             HttpResponseMessage response = await client.GetAsync("api/game");
             if (response.IsSuccessStatusCode)
             {
+                object p = response.Content.ReadAsAsync<Game>();
                 var a = response.Content.ReadAsStringAsync().Result;
 
                 return new List<Game>();

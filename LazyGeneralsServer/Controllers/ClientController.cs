@@ -19,11 +19,10 @@ namespace LazyGeneralsServer.Controllers
             _context = context;
         }
 
-        // GET: api/<ClientController>
         [HttpGet]
-        public async Task<List<Client>> GetAll()
+        public IEnumerable<Client> GetAll()
         {
-            return await _context.GetAllClients();
+            return _context.GetAllClients();
         }
 
         [HttpGet("{name}")]
@@ -32,15 +31,10 @@ namespace LazyGeneralsServer.Controllers
             return await _context.GetClient(name);
         }
 
-        [HttpPost]
+        [HttpPost("{name}")]
         public CreatedResult Create(string name, string pass)
         {
             return Created("api/clients", _context.CreateClient(name, pass) );
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
 
         [HttpDelete("{name}")]

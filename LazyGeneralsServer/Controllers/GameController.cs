@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using LazyGeneralsServer.Models;
 using LazyGeneralsServer.Models.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.Swagger.Annotations;
 
 namespace LazyGeneralsServer.Controllers
 {
@@ -21,36 +23,31 @@ namespace LazyGeneralsServer.Controllers
             _context = context;
         }
 
-        // GET: api/<GameController>
         [HttpGet]
-        public async Task<List<Game>> Get()
+        public IEnumerable<Game> Get()
         {
-            return await _context.GetAllClients();
+            return  _context.GetAllGames();
         }
 
-        // GET api/<GameController>/5
         [HttpGet("{name}")]
-        public string Get(string name)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public Task<Game> Get(string name)
         {
-            return "value";
+            return _context.GetGame(name);
         }
 
-        // POST api/<GameController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("{name}")]
+        public async Task<CreatedResult> CreateLobby(string name, string client, string pass = "", string comment = "")
         {
+            Client c = await _context.GetClient(client);
+            return Created("api/{name}", _context.CreateGame(name, pass, c, comment));
         }
 
-        // PUT api/<GameController>/5
-        [HttpPut("{name}")]
-        public void CreateLobby(int name, [FromBody] string pass = "")
+        [HttpDelete("{name}")]
+        public string Delete(string name)
         {
-        }
-
-        // DELETE api/<GameController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var result = _context.DeleteGame(name);
+            return result.ToString();
         }
     }
 }
