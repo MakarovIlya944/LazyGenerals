@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using LazyGeneralsServer.Models;
+using Serilog;
 
 namespace LazyGeneralsServer
 {
@@ -42,7 +42,6 @@ namespace LazyGeneralsServer
                 sp.GetRequiredService<IOptions<MongoDBOptions>>().Value);
 
             services.AddTransient<IServerContext, ServerContext>();
-
             //    services.AddSingleton<RedisJobFetchingService>();
             //    services.AddSingleton<IJobFetchingService<IProcessingData>, RedisJobFetchingService>
             //        (sp => sp.GetRequiredService<RedisJobFetchingService>());
@@ -69,6 +68,8 @@ namespace LazyGeneralsServer
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSerilogRequestLogging();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

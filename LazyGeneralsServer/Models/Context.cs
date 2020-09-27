@@ -1,8 +1,11 @@
 using LazyGeneralsServer.Models.Entities;
 using LazyGeneralsServer.Models.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -29,7 +32,8 @@ namespace LazyGeneralsServer.Models
         private IMongoDatabase database; // база данных
         private IGridFSBucket gridFS;   // файловое хранилище
 
-        public ServerContext(IOptions<MongoDBOptions> options)
+
+        public ServerContext(ILogger<ServerContext> logger, IOptions<MongoDBOptions> options)
         {
             MongoInternalIdentity internalIdentity = new MongoInternalIdentity("admin", options.Value.Username);
             PasswordEvidence passwordEvidence = new PasswordEvidence(options.Value.Password);
@@ -44,6 +48,17 @@ namespace LazyGeneralsServer.Models
             database = client.GetDatabase(options.Value.DatabaseName);
             // получаем доступ к файловому хранилищу
             gridFS = new GridFSBucket(database);
+
+            var _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            try
+            {
+                GetAllClients();
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Failed to connect to Mongo database!");
+                throw;
+            }
         }
 
         public IEnumerable<Client> GetAllClients()

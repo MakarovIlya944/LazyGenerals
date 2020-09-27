@@ -30,6 +30,8 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: weee
       ME_CONFIG_MONGODB_SERVER: database
       ME_CONFIG_MONGODB_AUTH_DATABASE: lazy
+    depends_on: 
+      - database
 
   database:
     image: mongo
