@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LazyGenerals.Server.Models;
+using LazyGenerals.Server.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
-using LazyGeneralsServer.Models;
-using LazyGeneralsServer.Models.Entities;
 
-namespace LazyGeneralsServer.Controllers
+namespace LazyGenerals.Server.Controllers
 {
     [Route("api/client")]
     [ApiController]

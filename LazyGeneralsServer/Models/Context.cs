@@ -1,17 +1,15 @@
-using LazyGeneralsServer.Models.Entities;
-using LazyGeneralsServer.Models.Options;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using LazyGenerals.Server.Extensions;
+using LazyGenerals.Server.Models.Entities;
+using LazyGenerals.Server.Models.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace LazyGeneralsServer.Models
+namespace LazyGenerals.Server.Models
 {
     public interface IServerContext
     {
@@ -29,12 +27,14 @@ namespace LazyGeneralsServer.Models
 
     public class ServerContext : IServerContext
     {
-        private IMongoDatabase database; // база данных
-        private IGridFSBucket gridFS;   // файловое хранилище
+        private readonly ILogger<ServerContext> _logger;
 
+        private readonly IMongoDatabase _database; // база данных
+        private readonly IGridFSBucket _gridFS;   // файловое хранилище
 
         public ServerContext(ILogger<ServerContext> logger, IOptions<MongoDBOptions> options)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             MongoInternalIdentity internalIdentity = new MongoInternalIdentity("admin", options.Value.Username);
             PasswordEvidence passwordEvidence = new PasswordEvidence(options.Value.Password);
             MongoCredential mongoCredential = new MongoCredential(options.Value.AuthMechanism, internalIdentity, passwordEvidence);
@@ -45,79 +45,84 @@ namespace LazyGeneralsServer.Models
             // получаем клиента для взаимодействия с базой данных
             MongoClient client = new MongoClient(settings);
             // получаем доступ к самой базе данных
-            database = client.GetDatabase(options.Value.DatabaseName);
+            _database = client.GetDatabase(options.Value.DatabaseName);
             // получаем доступ к файловому хранилищу
-            gridFS = new GridFSBucket(database);
+            _gridFS = new GridFSBucket(_database);
 
-            var _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             try
             {
+                _database.Ping();
                 GetAllClients();
             }
             catch (Exception)
             {
-                _logger.LogError("Failed to connect to Mongo database!");
+                _logger.LogError("Failed to connect to Mongo _database!");
                 throw;
             }
         }
 
         public IEnumerable<Client> GetAllClients()
         {
-            var clients = database.GetCollection<Client>("Client").Find(_ => true).ToList();
+            var clients = _database.GetCollection<Client>("Client").Find(_ => true).ToList();
             clients.ForEach(x => x.Password = x.Password == "" ? "" : "***");
             return clients;
         }
 
         public Task<Client> GetClient(string username)
         {
-            return database.GetCollection<Client>("Client").Find(c => c.Name == username).FirstOrDefaultAsync();
+            return _database.GetCollection<Client>().Find(c => c.Name == username).FirstOrDefaultAsync();
         }
 
         public ReplaceOneResult ChangePassword(string username, string newPass)
         {
-            return database.GetCollection<Client>("Client").ReplaceOne(c => c.Name == username, new Client() { Name = username, Password = newPass });
+            return _database.GetCollection<Client>().ReplaceOne(c => c.Name == username, new Client() { Name = username, Password = newPass });
         }
 
         public DeleteResult DeleteClient(string username)
         {
-            return database.GetCollection<Client>("Client").DeleteOne(c => c.Name == username);
+            return _database.GetCollection<Client>().DeleteOne(c => c.Name == username);
         }
 
         public Client CreateClient(string username, string pass)
         {
             // TODO add check exist
-            database.GetCollection<Client>("Client").InsertOne(new Client() { Name = username, Password = pass, Ready = false });
-            var client = database.GetCollection<Client>("Client").Find(c => c.Name == username).FirstOrDefault();
+            _database.GetCollection<Client>().InsertOne(new Client() { Name = username, Password = pass, Ready = false });
+            var client = _database.GetCollection<Client>().Find(c => c.Name == username).FirstOrDefault();
             client.Password = "***";
             return client;
         }
 
         public IEnumerable<Game> GetAllGames()
         {
-            var games = database.GetCollection<Game>("Game").Find(_ => true).ToList();
+            var games = _database.GetCollection<Game>().Find(_ => true).ToList();
             games.ForEach(x => x.Password = x.Password == "" ? "" : "***");
             return games;
         }
 
         public Task<Game> GetGame(string name)
         {
-            return database.GetCollection<Game>("Game").Find(c => c.Name == name).FirstOrDefaultAsync();
+            return _database.GetCollection<Game>().Find(c => c.Name == name).FirstOrDefaultAsync();
         }
 
         public Game CreateGame(string name, string pass, Client host, string gameStaff)
         {
             // TODO add check exist
-            database.GetCollection<Game>("Game").InsertOne(new Game() {
-                Name = name, Password = pass, Host = host, GameStaff = gameStaff, Clients = new List<Client>() 
+            _database.GetCollection<Game>().InsertOne(new Game()
+            {
+                Name = name,
+                Password = pass,
+                Host = host,
+                GameStaff = gameStaff,
+                Clients = new List<Client>()
             });
-            var game = database.GetCollection<Game>("Game").Find(c => c.Name == name).FirstOrDefault();
+            var game = _database.GetCollection<Game>().Find(c => c.Name == name).FirstOrDefault();
             game.Password = "***";
             return game;
         }
 
         public DeleteResult DeleteGame(string name)
         {
-            return database.GetCollection<Game>("Game").DeleteOne(c => c.Name == name);
+            return _database.GetCollection<Game>().DeleteOne(c => c.Name == name);
         }
     }
 }

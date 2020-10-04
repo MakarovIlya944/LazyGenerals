@@ -1,4 +1,4 @@
-namespace LazyGeneralsServer.Models.Options
+namespace LazyGenerals.Server.Models.Options
 {
     public class MongoDBOptions : IMongoDBOptions
     {
@@ -9,6 +9,7 @@ namespace LazyGeneralsServer.Models.Options
         public string AuthMechanism { get; set; }
     }
 
+    //Не знаю зачем ты захотел интерфейс опций?
     public interface IMongoDBOptions
     {
         string ConnectionString { get; set; }

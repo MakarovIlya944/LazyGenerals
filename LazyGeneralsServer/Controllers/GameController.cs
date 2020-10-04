@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using LazyGeneralsServer.Models;
-using LazyGeneralsServer.Models.Entities;
+using LazyGenerals.Server.Models;
+using LazyGenerals.Server.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Swagger.Annotations;
 
-namespace LazyGeneralsServer.Controllers
+namespace LazyGenerals.Server.Controllers
 {
     [Route("api/game")]
     [ApiController]
