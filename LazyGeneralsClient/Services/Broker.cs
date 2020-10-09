@@ -39,8 +39,6 @@ namespace LazyGenerals.Client.Services
                     throw;
                 }
 
-                int c = 3 + 4;
-
                 return new List<Game>();
             }
 

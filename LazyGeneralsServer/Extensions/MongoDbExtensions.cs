@@ -6,7 +6,7 @@ namespace LazyGenerals.Server.Extensions
 {
     public static class MongoDbExtensions
     {
-        public static IMongoCollection<T> GetCollection<T>(this IMongoDatabase mongoDatabase, string? name = null, MongoCollectionSettings settings = null)
+        public static IMongoCollection<T> GetCollection<T>(this IMongoDatabase mongoDatabase, string? name = null, MongoCollectionSettings? settings = null)
         {
             return mongoDatabase.GetCollection<T>(name ?? typeof(T).Name, settings);
         }
