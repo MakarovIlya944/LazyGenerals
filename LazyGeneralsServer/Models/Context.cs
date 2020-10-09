@@ -34,8 +34,8 @@ namespace LazyGenerals.Server.Models
     {
         private readonly ILogger<ServerContext> _logger;
 
-        private readonly IMongoDatabase _database; // ���� ������
-        private readonly IGridFSBucket _gridFS;   // �������� ���������
+        private readonly IMongoDatabase _database; // база данных
+        private readonly IGridFSBucket _gridFS;   // файловое хранилище
 
         public ServerContext(ILogger<ServerContext> logger, IOptions<MongoDBOptions> options)
         {
@@ -47,11 +47,11 @@ namespace LazyGenerals.Server.Models
 
             MongoClientSettings settings = new MongoClientSettings() { Credential = mongoCredential, Server = addres };
 
-            // �������� ������� ��� �������������� � ����� ������
+            // получаем клиента для взаимодействия с базой данных
             MongoClient client = new MongoClient(settings);
-            // �������� ������ � ����� ���� ������
+            // получаем доступ к самой базе данных
             _database = client.GetDatabase(options.Value.DatabaseName);
-            // �������� ������ � ��������� ���������
+            // получаем доступ к файловому хранилищу
             _gridFS = new GridFSBucket(_database);
 
             try

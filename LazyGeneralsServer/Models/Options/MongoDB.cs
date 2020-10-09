@@ -9,7 +9,7 @@ namespace LazyGenerals.Server.Models.Options
         public string AuthMechanism { get; set; }
     }
 
-    //Не знаю зачем ты захотел интерфейс опций?
+    //РќРµ Р·РЅР°СЋ Р·Р°С‡РµРј С‚С‹ Р·Р°С…РѕС‚РµР» РёРЅС‚РµСЂС„РµР№СЃ РѕРїС†РёР№?
     public interface IMongoDBOptions
     {
         string ConnectionString { get; set; }
