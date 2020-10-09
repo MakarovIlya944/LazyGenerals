@@ -8,6 +8,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LazyGenerals.Server.Models
 {
@@ -29,8 +34,8 @@ namespace LazyGenerals.Server.Models
     {
         private readonly ILogger<ServerContext> _logger;
 
-        private readonly IMongoDatabase _database; // база данных
-        private readonly IGridFSBucket _gridFS;   // файловое хранилище
+        private readonly IMongoDatabase _database; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+        private readonly IGridFSBucket _gridFS;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         public ServerContext(ILogger<ServerContext> logger, IOptions<MongoDBOptions> options)
         {
@@ -42,11 +47,11 @@ namespace LazyGenerals.Server.Models
 
             MongoClientSettings settings = new MongoClientSettings() { Credential = mongoCredential, Server = addres };
 
-            // получаем клиента для взаимодействия с базой данных
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             MongoClient client = new MongoClient(settings);
-            // получаем доступ к самой базе данных
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             _database = client.GetDatabase(options.Value.DatabaseName);
-            // получаем доступ к файловому хранилищу
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             _gridFS = new GridFSBucket(_database);
 
             try

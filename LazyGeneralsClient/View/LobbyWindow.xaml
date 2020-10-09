@@ -9,7 +9,7 @@
     <Page.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF38B2CF"/>
-            <GradientStop Color="#FF015367" Offset="1"/>
+            <GradientStop Color="#206676" Offset="1"/>
         </LinearGradientBrush>
     </Page.Background>
 
@@ -24,13 +24,17 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Column="1" Grid.Row="1" Background="#FF206677">
+        <ListView Grid.Column="1" Grid.Row="1" Background="#FF206677" Name="listGames">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding Path=Name}"/>
+                    <GridViewColumn Header="Пароль" DisplayMemberBinding="{Binding Path=Password}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="GetLobbyButton" Content="Button" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="GetLobbyButton_Click"/>
+
+        <Button x:Name="GetLobbyButton" Content="Найти сражения" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="GetLobbyButton_Click"/>
+        <Rectangle Grid.Column="1" HorizontalAlignment="Center" Height="105" Grid.Row="2" Stroke="Black" VerticalAlignment="Center" Width="578" Fill="#FF000232"/>
+        <TextBlock x:Name="TextOutput" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="2" Text="" TextWrapping="Wrap" VerticalAlignment="Center" Height="94" Width="568" Background="#015367"/>
     </Grid>
 </Page>
