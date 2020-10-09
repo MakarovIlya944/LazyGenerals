@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LazyGenerals.Server.Extensions;
 using LazyGenerals.Server.Models.Entities;
+using LazyGenerals.Server.Extensions;
 using LazyGenerals.Server.Models.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,28 +12,15 @@ using System.Linq;
 
 namespace LazyGenerals.Server.Models
 {
-    public interface IServerContext
+    public class ClientContext : IClientContext
     {
-        IEnumerable<Client> GetAllClients();
-        Task<Client> GetClient(string name);
-        Client CreateClient(string username, string pass);
-        ReplaceOneResult ChangePassword(string username, string newPass);
-        DeleteResult DeleteClient(string username);
-
-        IEnumerable<Game> GetAllGames();
-        Task<Game> GetGame(string name);
-        Game CreateGame(string name, string pass, Client host, string gameStaff);
-        DeleteResult DeleteGame(string name);
-    }
-
-    public class ServerContext : IServerContext
-    {
-        private readonly ILogger<ServerContext> _logger;
+        private readonly ILogger<ClientContext> _logger;
 
         private readonly IMongoDatabase _database; // база данных
         private readonly IGridFSBucket _gridFS;   // файловое хранилище
+        private readonly IGameContext gameContext;
 
-        public ServerContext(ILogger<ServerContext> logger, IOptions<MongoDBOptions> options)
+        public ClientContext(ILogger<ClientContext> logger, IOptions<MongoDBOptions> options)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             MongoInternalIdentity internalIdentity = new MongoInternalIdentity("admin", options.Value.Username);
@@ -91,39 +78,6 @@ namespace LazyGenerals.Server.Models
             var client = _database.GetCollection<Client>().Find(c => c.Name == username).FirstOrDefault();
             client.Password = "***";
             return client;
-        }
-
-        public IEnumerable<Game> GetAllGames()
-        {
-            var games = _database.GetCollection<Game>().Find(_ => true).ToList();
-            games.ForEach(x => x.Password = x.Password == "" ? "" : "***");
-            return games;
-        }
-
-        public Task<Game> GetGame(string name)
-        {
-            return _database.GetCollection<Game>().Find(c => c.Name == name).FirstOrDefaultAsync();
-        }
-
-        public Game CreateGame(string name, string pass, Client host, string gameStaff)
-        {
-            // TODO add check exist
-            _database.GetCollection<Game>().InsertOne(new Game()
-            {
-                Name = name,
-                Password = pass,
-                Host = host,
-                GameStaff = gameStaff,
-                Clients = new List<Client>()
-            });
-            var game = _database.GetCollection<Game>().Find(c => c.Name == name).FirstOrDefault();
-            game.Password = "***";
-            return game;
-        }
-
-        public DeleteResult DeleteGame(string name)
-        {
-            return _database.GetCollection<Game>().DeleteOne(c => c.Name == name);
         }
     }
 }

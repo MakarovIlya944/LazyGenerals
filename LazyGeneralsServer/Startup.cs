@@ -32,7 +32,7 @@ namespace LazyGenerals.Server
             services.AddSingleton<IMongoDBOptions>(sp =>
                 sp.GetRequiredService<IOptions<MongoDBOptions>>().Value);
 
-            services.AddTransient<IServerContext, ServerContext>();
+            services.AddTransient<IClientContext, ClientContext>();
             //    services.AddSingleton<RedisJobFetchingService>();
             //    services.AddSingleton<IJobFetchingService<IProcessingData>, RedisJobFetchingService>
             //        (sp => sp.GetRequiredService<RedisJobFetchingService>());

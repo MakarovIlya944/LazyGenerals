@@ -10,9 +10,9 @@ namespace LazyGenerals.Server.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private readonly IServerContext _context;
+        private readonly IClientContext _context;
 
-        public ClientController(IServerContext context)
+        public ClientController(IClientContext context)
         {
             _context = context;
         }
@@ -32,7 +32,7 @@ namespace LazyGenerals.Server.Controllers
         [HttpPost("{name}")]
         public CreatedResult Create(string name, string pass)
         {
-            return Created("api/clients", _context.CreateClient(name, pass) );
+            return Created("api/clients", _context.CreateClient(name, pass));
         }
 
         [HttpDelete("{name}")]

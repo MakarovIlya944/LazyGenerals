@@ -11,9 +11,9 @@ namespace LazyGenerals.Server.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        private readonly IServerContext _context;
+        private readonly IGameContext _context;
 
-        public GameController(IServerContext context)
+        public GameController(IGameContext context)
         {
             _context = context;
         }
@@ -21,7 +21,7 @@ namespace LazyGenerals.Server.Controllers
         [HttpGet]
         public IEnumerable<Game> Get()
         {
-            return  _context.GetAllGames();
+            return _context.GetAllGames();
         }
 
         [HttpGet("{name}")]
@@ -32,9 +32,10 @@ namespace LazyGenerals.Server.Controllers
         }
 
         [HttpPost("{name}")]
-        public async Task<CreatedResult> CreateLobby(string name, string client, string pass = "", string comment = "")
+        // TODO: pass only `GetClient` method, not a whole `IClientContext`?
+        public async Task<CreatedResult> CreateLobby(IClientContext clientContext, string name, string client, string pass = "", string comment = "")
         {
-            Client c = await _context.GetClient(client);
+            Client c = await clientContext.GetClient(client);
             return Created("api/{name}", _context.CreateGame(name, pass, c, comment));
         }
 
